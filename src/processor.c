@@ -1,7 +1,7 @@
 #pragma once
-#include "processor.h"
-#include "base.h"
-#include "macros.h"
+#include "../include/processor.h"
+#include "../include/base.h"
+#include "../include/macros.h"
 #include <malloc.h>
 
 

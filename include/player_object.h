@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../base/macros.h"
-#include "../base/object.h"
-#include "../base/processor.h"
+#include "macros.h"
+#include "object.h"
+#include "processor.h"
 
 Object* create_player_object();
 

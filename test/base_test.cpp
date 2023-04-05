@@ -1,7 +1,7 @@
 #include <cfloat>
 #include <iostream>
 extern "C"{
-    #include "../base/base.h"
+    #include "../include/base.h"
 }
 #include "gtest/gtest.h"
 
@@ -13,9 +13,9 @@ TEST(BASE_TEST, init){
 
 TEST(BASE_TEST, create_block){
     Base* base = create_base(5, 5);
-    Block* block = create_block(base, 0, 0, 1, 2);
-    Block* block2 = create_block(base, 3, 3, 2, 2);
-    Block* block3 = create_block(base, 0, 4, 1, 1);
+    Block* block = create_block(base, 0, 0, 1, 2, UP);
+    Block* block2 = create_block(base, 3, 3, 2, 2, UP);
+    Block* block3 = create_block(base, 0, 4, 1, 1, UP);
     ASSERT_TRUE(block != NULL);
     ASSERT_TRUE(block->x == 0);
     ASSERT_TRUE(block->y == 0);
@@ -52,9 +52,9 @@ TEST(BASE_TEST, create_block){
 
 TEST(BASE_TEST, teleport_block){
     Base* base = create_base(5, 5);
-    Block* block = create_block(base, 0, 0, 1, 2);
-    Block* block2 = create_block(base, 3, 3, 2, 2);
-    Block* block3 = create_block(base, 0, 4, 1, 1);
+    Block* block = create_block(base, 0, 0, 1, 2, UP);
+    Block* block2 = create_block(base, 3, 3, 2, 2, UP);
+    Block* block3 = create_block(base, 0, 4, 1, 1, UP);
     BOOL a = teleport_block(base, 1, 0, block);
     Block* true_matrix[5][5] = {
         {0, block, 0, 0, 0},
@@ -76,9 +76,9 @@ TEST(BASE_TEST, teleport_block){
 
 TEST(BASE_TEST, move_block){
     Base* base = create_base(5, 5);
-    Block* block = create_block(base, 0, 0, 1, 2);
-    Block* block2 = create_block(base, 3, 3, 2, 2);
-    Block* block3 = create_block(base, 0, 2, 1, 1);
+    Block* block = create_block(base, 0, 0, 1, 2, UP);
+    Block* block2 = create_block(base, 3, 3, 2, 2, UP);
+    Block* block3 = create_block(base, 0, 2, 1, 1, UP);
     Block* true_matrix[5][5] = {
         {block, 0, 0, 0, 0},
         {block, 0, 0, 0, 0},
@@ -135,9 +135,9 @@ TEST(BASE_TEST, move_block){
 
 TEST(BASE_TEST, detect_exist_block){
     Base* base = create_base(5, 5);
-    Block* block = create_block(base, 0, 0, 1, 2);
-    Block* block2 = create_block(base, 3, 3, 2, 2);
-    Block* block3 = create_block(base, 0, 2, 1, 1);
+    Block* block = create_block(base, 0, 0, 1, 2, UP);
+    Block* block2 = create_block(base, 3, 3, 2, 2, UP);
+    Block* block3 = create_block(base, 0, 2, 1, 1, UP);
     Block* true_matrix[5][5] = {
         {block, 0, 0, 0, 0},
         {block, 0, 0, 0, 0},
@@ -161,10 +161,10 @@ TEST(BASE_TEST, detect_exist_block){
 
 TEST(BASE_TEST, find_closest_block_in_direction){
     Base* base = create_base(5, 5);
-    Block* block = create_block(base, 0, 0, 1, 2);
-    Block* block2 = create_block(base, 3, 3, 2, 2);
-    Block* block3 = create_block(base, 0, 4, 1, 1);
-    Block* block4 = create_block(base, 2, 2, 1, 1);
+    Block* block = create_block(base, 0, 0, 1, 2, UP);
+    Block* block2 = create_block(base, 3, 3, 2, 2, UP);
+    Block* block3 = create_block(base, 0, 4, 1, 1, UP);
+    Block* block4 = create_block(base, 2, 2, 1, 1, UP);
     Block* true_matrix[5][5] = {
         {block, 0, 0, 0, 0},
         {block, 0, 0, 0, 0},
@@ -211,10 +211,10 @@ TEST(BASE_TEST, find_closest_block_in_direction){
 
 TEST(BASE_TEST, find_closest_block){
     Base* base = create_base(5, 5);
-    Block* block = create_block(base, 0, 0, 1, 2);
-    Block* block2 = create_block(base, 3, 3, 2, 2);
-    Block* block3 = create_block(base, 0, 4, 1, 1);
-    Block* block4 = create_block(base, 2, 2, 1, 1);
+    Block* block = create_block(base, 0, 0, 1, 2, UP);
+    Block* block2 = create_block(base, 3, 3, 2, 2, UP);
+    Block* block3 = create_block(base, 0, 4, 1, 1, UP);
+    Block* block4 = create_block(base, 2, 2, 1, 1, UP);
     Block* true_matrix[5][5] = {
         {block , 0, 0     , 0     , 0},
         {block , 0, 0     , 0     , 0},

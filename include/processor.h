@@ -17,7 +17,7 @@ typedef struct ProcessorAPIRequest ProcessorAPIRequest;
 #include "macros.h"
 #include "anime_pack.h"
 
-#include "../character/player_object.h"
+#include "player_object.h"
 
 struct ProcessorAPIRequest{
     int type;
