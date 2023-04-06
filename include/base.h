@@ -1,26 +1,21 @@
 #pragma once
-#include "macros.h"
-
-
-typedef struct Block{
-    // Position : up left corner
-    int x;
-    int y;
-
-    // length : x
-    // height : y
-    int length;
-    int height;
-    
-    int orientation;
-
-    // this module did not release the "any" pointer
-    void* any;
-    int any_type;
-} Block;
 
 struct Base;
 typedef struct Base Base;
+
+#include "macros.h"
+
+
+typedef struct Block{               // Position : up left corner
+    int x;
+    int y;
+    int length;                     // length : x
+    int height;                     // height : y
+    int orientation;                // UP, DOWN, LEFT, RIGHT
+    void* any;                      // this module did not release the "any" pointer
+} Block;
+
+
 struct Base
 {
     Block ***base;
@@ -40,7 +35,7 @@ struct Base
     Block* (*find_closest_block_in_direction)(Base *self, Block *block, int direction);
     Block* (*find_closest_block)(Base *self, Block *block);
     BOOL (*find_all_blocks)(Base *self, int x1, int y1, int x2, int y2, Block **blocks, int *length);
-
+    void (*generate_distance_list)(Base *self, Block ***blocks, int *length);
 };
 
 // create a base
@@ -99,6 +94,13 @@ Block* find_closest_block(Base *self, Block *block);
 // find all blocks in the area
 // if find at least 1, return TRUE, else return FALSE
 BOOL find_all_blocks(Base *self, int x1, int y1, int x2, int y2, Block **blocks, int *length);
+
+
+// this function first generate a list of existing blocks, and keep their x, y, Block* in a list
+// then generate a 2d array of n * n, n is the length of the list
+// the array is used to store the distance between the block and the target block
+// then sort the array by the distance
+void generate_distance_list(Base *self, Block ***blocks, int *length);
 
 
 

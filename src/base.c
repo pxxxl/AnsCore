@@ -84,6 +84,7 @@ Base* create_base(int length, int height){
     self->find_closest_block_in_direction = find_closest_block_in_direction;
     self->find_closest_block = find_closest_block;
     self->find_all_blocks = find_all_blocks;
+    self->generate_distance_list = generate_distance_list;
     return self;
 }
 
@@ -453,7 +454,6 @@ Block* find_closest_block_in_direction(Base *self, Block *block, int direction){
 void assign_data(Base* self, Block* block, void* any, int any_type){
     check_null_base_pointer("assign_data", self);
     block->any = any;
-    block->any_type = any_type;
 }
 
 
@@ -534,4 +534,49 @@ BOOL find_all_blocks(Base *self, int x1, int y1, int x2, int y2, Block **blocks,
     }
     *length = count;
     return TRUE;
+}
+
+// this function first generate a list of existing blocks, and keep their x, y, Block* in a list
+// then generate a 2d array of n * n, n is the length of the list
+// the array is used to store the distance between the block and the target block
+// then sort the array by the distance
+void generate_distance_list(Base *self, Block ***blocks, int *length){
+    Block **list = (Block**)malloc(sizeof(Block*) * self->length * self->height);
+    int list_length = 0;
+    find_all_blocks(self, 0, 0, self->length, self->height, list, &list_length);
+    float **distance_list = (float**)malloc(sizeof(float*) * list_length);
+    for (int i = 0; i < list_length; i++){
+        distance_list[i] = (float*)malloc(sizeof(float) * list_length);
+    }
+    for (int i = 0; i < list_length; i++){
+        for (int j = 0; j < list_length; j++){
+            distance_list[i][j] = (list[i]->x - list[j]->x)*(list[i]->x - list[j]->x) + (list[i]->y - list[j]->y)*(list[i]->y - list[j]->y);
+        }
+    }
+    // then according to the distance list, place the blocks in the blocks 2d array, each line in the 2d array is a list of blocks which are sorted by the distance
+    for (int i = 0; i < list_length; i++){
+        for(int j = 0; j < list_length; j++){
+            // now fill the blocks for BLOCK* : blocks[i]
+            // find the min distance
+            float min = 100000000;
+            int min_index = 0;
+            for (int k = 0; k < list_length; k++){
+                if (distance_list[i][k] < min){
+                    min = distance_list[i][k];
+                    min_index = k;
+                }
+            }
+            // fill the min_index block
+            blocks[i][j] = list[min_index];
+            // set the distance to a big number
+            distance_list[i][min_index] = 100000000;
+        }
+    }
+    // free the list
+    free(list);
+    // free the distance list
+    for (int i = 0; i < list_length; i++){
+        free(distance_list[i]);
+    }
+    free(distance_list);
 }

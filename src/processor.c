@@ -27,14 +27,79 @@ static PlayerDisplayPack processor_player_data_to_anime_player_data(Player* play
     pack.skill_num = player->skill_num;
     pack.skill_choice = player->skill_choice;
     int i = 0;
-    for(i = 0; i < PLAYER_SKILL_NUM; i++){
+    for(i = 0; i < SKILL_NUM; i++){
         pack.skill_tag[i] = player->skill_tag[i];
     }
     return pack;
 }
 
-static void processAPIRequest(Processor *self, ProcessorAPIRequest *request){
+/*
+#define API_REQUEST_MAX_NUM 100             // the max number of the api request
+#define API_REQUEST_MOVE 1                  // move
+#define API_REQUEST_TELEPORT 2              // teleport
+#define API_REQUEST_FREEZE 3                // freeze
+#define API_REQUEST_BURN 4                  // burn
+#define API_REQUEST_DEFEND 5                // defend
+#define API_REQUEST_WEAK 6                  // weak
+#define API_REQUEST_HEAL 7                  // heal
+#define API_REQUEST_HURT 8                  // hurt
+#define API_REQUEST_LOAD_ANIME 9            // load anime
 
+struct ProcessorAPIRequest{
+    int type;
+    Object* source;
+    Object* target;
+    int x;
+    int y;
+    int ext_1;
+    int ext_2;
+    void* ext_3;
+};
+*/
+
+static void processAPIRequest(Processor *self, ProcessorAPIRequest *request){
+    switch(request->type){
+        case API_REQUEST_MOVE:
+            self->base->move_block(self->base, request->source, request->ext_1, request->ext_2);
+            break;
+        case API_REQUEST_TELEPORT:
+            self->base->teleport_block(self->base, request->source, request->x, request->y);
+            break;
+        case API_REQUEST_FREEZE:
+            request->target->freeze(request->target, request->ext_1);
+            break;
+        case API_REQUEST_BURN:
+            request->target->burn(request->target, request->ext_1);
+            break;
+        case API_REQUEST_DEFEND:
+            request->target->defend(request->target, request->ext_1);
+            break;
+        case API_REQUEST_WEAK:
+            request->target->weak(request->target, request->ext_1);
+            break;
+        case API_REQUEST_HEAL:
+            request->target->heal(request->target, request->ext_1);
+            break;
+        case API_REQUEST_HURT:
+            int hurt = request->ext_1;
+            if(request->target->status.defending_degree > 0){
+                hurt -= request->target->status.defending_degree;
+            }
+            if(request->source->status.weak_degree > 0){
+                hurt -= request->source->status.weak_degree;
+            }
+            if(hurt < 0){
+                hurt = 0;
+            }
+            request->target->hurt(request->target, hurt);
+            break;
+        case API_REQUEST_LOAD_ANIME:
+            self->anime_cache[self->anime_cache_size] = *((AnimePack*)request->ext_3);
+            self->anime_cache_size++;
+            break;
+        default:
+            break;
+    }
 }
 
 
@@ -112,7 +177,6 @@ Object* place_object(Processor *self, Object* object, int x, int y, int length, 
     if(block == NULL){
         return NULL;
     }
-    block->any_type = object->config.type;
     block->any = (void*)object;
     object->block = block;
     object->host = self;
@@ -199,10 +263,16 @@ void step(Processor *self){
 // export the anime data
 ProcessorAnimeData export_anime_data(Processor *self){
     ProcessorAnimeData data;
-    int i;
-    for(i = 0; i < self->anime_cache_size; i++){
-        data.anime_pack[i] = self->anime_cache[i];
+    int i, j;
+    for(i = 0, j = 0; i < self->anime_cache_size; i++){
+        if(self->anime_cache[i].delay == 0){
+            data.anime_pack[i] = self->anime_cache[i];
+            j++;
+        } else{
+            self->anime_cache[i].delay--;
+        }
     }
+    data.anime_pack_size = j;
     data.player_display_pack[0] = processor_player_data_to_anime_player_data(self->player[0]);
     data.player_display_pack[1] = processor_player_data_to_anime_player_data(self->player[1]);
     return data;

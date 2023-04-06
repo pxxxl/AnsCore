@@ -12,10 +12,13 @@ typedef struct ProcessorAnimeData ProcessorAnimeData;
 struct ProcessorAPIRequest;
 typedef struct ProcessorAPIRequest ProcessorAPIRequest;
 
+struct ProcessorExternInstruction;
+typedef struct ProcessorExternInstruction ProcessorExternInstruction;
+
 #include "base.h"
 #include "object.h"
 #include "macros.h"
-#include "anime_pack.h"
+#include "anime.h"
 
 #include "player_object.h"
 
@@ -28,27 +31,6 @@ struct ProcessorAPIRequest{
     int ext_1;
     int ext_2;
     void* ext_3;
-};
-
-struct Processor{
-    Base *base;
-    ProcessorAPI *api;
-    Player* player[2];
-
-    AnimePack anime_cache[ANIME_PACK_CACHE_MAX_LENGTH];
-    int anime_cache_size;
-
-    Object* object_at_birth[OBJECT_AT_BIRTH_MAX_LENGTH];
-    int object_at_birth_size;
-    Object* object_at_death[OBJECT_AT_DEATH_MAX_LENGTH];
-    int object_at_death_size;
-
-    ProcessorAPIRequest request_queue[API_REQUEST_MAX_NUM];
-    int request_queue_size;
-
-    Object* (*place_object)(Processor *self, Object* object, int x, int y, int length, int height);
-    void (*step)(Processor *self);
-    ProcessorAnimeData (*export_anime_data)(Processor *self);
 };
 
 
@@ -71,6 +53,48 @@ struct ProcessorAPI{
     Object* (*find_closest_object)(Processor *host, int x, int y);
 };
 
+
+struct ProcessorAnimeData{
+    AnimePack anime_pack[ANIME_PACK_CACHE_MAX_LENGTH];
+    int anime_pack_size;
+
+    PlayerDisplayPack player_display_pack[2];
+};
+
+
+struct ProcessorExternInstruction{
+    int player_1_direction_key;
+    int player_1_attack_key;
+    int player_1_change_skill_key;
+    int player_1_use_skill_key;
+
+    int player_2_direction_key;
+    int player_2_attack_key;
+    int player_2_change_skill_key;
+    int player_2_use_skill_key;
+};
+
+
+struct Processor{
+    Base *base;
+    ProcessorAPI *api;
+    Player* player[2];
+
+    AnimePack anime_cache[ANIME_PACK_CACHE_MAX_LENGTH];
+    int anime_cache_size;
+
+    Object* object_at_birth[OBJECT_AT_BIRTH_MAX_LENGTH];
+    int object_at_birth_size;
+    Object* object_at_death[OBJECT_AT_DEATH_MAX_LENGTH];
+    int object_at_death_size;
+
+    ProcessorAPIRequest request_queue[API_REQUEST_MAX_NUM];
+    int request_queue_size;
+
+    Object* (*place_object)(Processor *self, Object* object, int x, int y, int length, int height);
+    void (*step)(Processor *self);
+    ProcessorAnimeData (*export_anime_data)(Processor *self);
+};
 
 
 // init the processor

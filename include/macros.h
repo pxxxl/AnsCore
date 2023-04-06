@@ -18,7 +18,7 @@
 #define NEUTRAL 5
 
 #define PLAYER_HP 100
-#define PLAYER_SKILL_NUM 6
+#define SKILL_NUM 6
 
 #define BASE_MAX_X 40                       // x range [0, BASE_MAX_X)
 #define BASE_MAX_Y 22                       // y range [0, BASE_MAX_Y)

@@ -37,6 +37,7 @@ struct Config{
 
 
 struct Object{
+    //notice: the "status" is used by the processor
     Status status;
     Config config;
 
@@ -44,9 +45,7 @@ struct Object{
     Processor* host;
     ProcessorAPI* api;
     void* self;
-
-    void (*init)(void *self);
-
+    
     void (*birth)(void *self);
     void (*action)(void *self);
     void (*death)(void *self);
@@ -63,7 +62,7 @@ struct Player{
     Object* object;
     int side;
 
-    int skill_tag[PLAYER_SKILL_NUM];
+    int skill_tag[SKILL_NUM];
     int skill_num;
 
     // if -1, means no skill is chosen
