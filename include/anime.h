@@ -1,5 +1,6 @@
 #pragma once
 #include "macros.h"
+#include "processor.h"
 /*
     * AnimePack
     * 
@@ -29,3 +30,7 @@ typedef struct PlayerDisplayPack{
     int skill_num;
     int skill_choice;            // if -1, means no skill is chosen
 } PlayerDisplayPack;
+
+void add_fixed_effect(Processor* host, int x, int y, int tag, int delay);
+void add_fixed_sustaining_effect(Processor* host, int x, int y, int tags[], int length);
+void add_move_effect(Processor* host, int x, int y, int des_x, int des_y, int tag, int delay);

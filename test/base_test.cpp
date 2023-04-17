@@ -13,9 +13,9 @@ TEST(BASE_TEST, init){
 
 TEST(BASE_TEST, create_block){
     Base* base = create_base(5, 5);
-    Block* block = create_block(base, 0, 0, 1, 2, UP);
-    Block* block2 = create_block(base, 3, 3, 2, 2, UP);
-    Block* block3 = create_block(base, 0, 4, 1, 1, UP);
+    Block* block = base->create_block(base, 0, 0, 1, 2, UP);
+    Block* block2 = base->create_block(base, 3, 3, 2, 2, UP);
+    Block* block3 = base->create_block(base, 0, 4, 1, 1, UP);
     ASSERT_TRUE(block != NULL);
     ASSERT_TRUE(block->x == 0);
     ASSERT_TRUE(block->y == 0);
@@ -34,7 +34,7 @@ TEST(BASE_TEST, create_block){
             ASSERT_TRUE(base->base[i][j] == true_matrix[i][j]);
         }
     }
-    delete_block(base, block);
+    base->delete_block(base, block);
     Block* true_matrix2[5][5] = {
         {0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0},
@@ -52,10 +52,10 @@ TEST(BASE_TEST, create_block){
 
 TEST(BASE_TEST, teleport_block){
     Base* base = create_base(5, 5);
-    Block* block = create_block(base, 0, 0, 1, 2, UP);
-    Block* block2 = create_block(base, 3, 3, 2, 2, UP);
-    Block* block3 = create_block(base, 0, 4, 1, 1, UP);
-    BOOL a = teleport_block(base, 1, 0, block);
+    Block* block = base->create_block(base, 0, 0, 1, 2, UP);
+    Block* block2 = base->create_block(base, 3, 3, 2, 2, UP);
+    Block* block3 = base->create_block(base, 0, 4, 1, 1, UP);
+    BOOL a = base->teleport_block(base, 1, 0, block);
     Block* true_matrix[5][5] = {
         {0, block, 0, 0, 0},
         {0, block, 0, 0, 0},
@@ -69,16 +69,16 @@ TEST(BASE_TEST, teleport_block){
             ASSERT_TRUE(base->base[i][j] == true_matrix[i][j]);
         }
     }
-    BOOL b  = teleport_block(base, 0, 3, block);
+    BOOL b  = base->teleport_block(base, 0, 3, block);
     ASSERT_TRUE(!b);
     destroy_base(base);
 }
 
 TEST(BASE_TEST, move_block){
     Base* base = create_base(5, 5);
-    Block* block = create_block(base, 0, 0, 1, 2, UP);
-    Block* block2 = create_block(base, 3, 3, 2, 2, UP);
-    Block* block3 = create_block(base, 0, 2, 1, 1, UP);
+    Block* block = base->create_block(base, 0, 0, 1, 2, UP);
+    Block* block2 = base->create_block(base, 3, 3, 2, 2, UP);
+    Block* block3 = base->create_block(base, 0, 2, 1, 1, UP);
     Block* true_matrix[5][5] = {
         {block, 0, 0, 0, 0},
         {block, 0, 0, 0, 0},
@@ -135,9 +135,9 @@ TEST(BASE_TEST, move_block){
 
 TEST(BASE_TEST, detect_exist_block){
     Base* base = create_base(5, 5);
-    Block* block = create_block(base, 0, 0, 1, 2, UP);
-    Block* block2 = create_block(base, 3, 3, 2, 2, UP);
-    Block* block3 = create_block(base, 0, 2, 1, 1, UP);
+    Block* block = base->create_block(base, 0, 0, 1, 2, UP);
+    Block* block2 = base->create_block(base, 3, 3, 2, 2, UP);
+    Block* block3 = base->create_block(base, 0, 2, 1, 1, UP);
     Block* true_matrix[5][5] = {
         {block, 0, 0, 0, 0},
         {block, 0, 0, 0, 0},
@@ -161,10 +161,10 @@ TEST(BASE_TEST, detect_exist_block){
 
 TEST(BASE_TEST, find_closest_block_in_direction){
     Base* base = create_base(5, 5);
-    Block* block = create_block(base, 0, 0, 1, 2, UP);
-    Block* block2 = create_block(base, 3, 3, 2, 2, UP);
-    Block* block3 = create_block(base, 0, 4, 1, 1, UP);
-    Block* block4 = create_block(base, 2, 2, 1, 1, UP);
+    Block* block = base->create_block(base, 0, 0, 1, 2, UP);
+    Block* block2 = base->create_block(base, 3, 3, 2, 2, UP);
+    Block* block3 = base->create_block(base, 0, 4, 1, 1, UP);
+    Block* block4 = base->create_block(base, 2, 2, 1, 1, UP);
     Block* true_matrix[5][5] = {
         {block, 0, 0, 0, 0},
         {block, 0, 0, 0, 0},
@@ -211,10 +211,10 @@ TEST(BASE_TEST, find_closest_block_in_direction){
 
 TEST(BASE_TEST, find_closest_block){
     Base* base = create_base(5, 5);
-    Block* block = create_block(base, 0, 0, 1, 2, UP);
-    Block* block2 = create_block(base, 3, 3, 2, 2, UP);
-    Block* block3 = create_block(base, 0, 4, 1, 1, UP);
-    Block* block4 = create_block(base, 2, 2, 1, 1, UP);
+    Block* block = base->create_block(base, 0, 0, 1, 2, UP);
+    Block* block2 = base->create_block(base, 3, 3, 2, 2, UP);
+    Block* block3 = base->create_block(base, 0, 4, 1, 1, UP);
+    Block* block4 = base->create_block(base, 2, 2, 1, 1, UP);
     Block* true_matrix[5][5] = {
         {block , 0, 0     , 0     , 0},
         {block , 0, 0     , 0     , 0},
@@ -235,6 +235,85 @@ TEST(BASE_TEST, find_closest_block){
     ASSERT_TRUE(C == block4);
     Block* D = base->find_closest_block(base, block4);
     ASSERT_TRUE(D == block2);
+}
+
+TEST(BASE_TEST, find_all_blocks){
+    Base* base = create_base(5, 5);
+    Block* block = base->create_block(base, 0, 0, 1, 2, UP);
+    Block* block2 = base->create_block(base, 3, 3, 2, 2, UP);
+    Block* block3 = base->create_block(base, 0, 4, 1, 1, UP);
+    Block* block4 = base->create_block(base, 2, 2, 1, 1, UP);
+    Block* true_matrix[5][5] = {
+        {block , 0, 0     , 0     , 0},
+        {block , 0, 0     , 0     , 0},
+        {0     , 0, block4, 0     , 0},
+        {0     , 0, 0     , block2, block2},
+        {block3, 0, 0     , block2, block2}
+    };
+    for(int i = 0; i < 5; i++){
+        for(int j = 0; j < 5; j++){
+            ASSERT_TRUE(base->base[i][j] == true_matrix[i][j]);
+        }
+    }
+    Block* A = base->find_closest_block(base, block);
+    ASSERT_TRUE(A == block4);
+    Block* B = base->find_closest_block(base, block2);
+    ASSERT_TRUE(B == block4);
+    Block* C = base->find_closest_block(base, block3);
+    ASSERT_TRUE(C == block4);
+    Block* D = base->find_closest_block(base, block4);
+    ASSERT_TRUE(D == block2);
+}
+
+
+TEST(BASE_TEST, generate_distance_list){
+    Base* base = create_base(5, 5);
+    Block* block = base->create_block(base, 0, 0, 1, 2, UP);
+    Block* block2 = base->create_block(base, 3, 3, 2, 2, UP);
+    Block* block3 = base->create_block(base, 0, 4, 1, 1, UP);
+    Block* block4 = base->create_block(base, 2, 2, 1, 1, UP);
+    Block* true_matrix[5][5] = {
+        {block , 0, 0     , 0     , 0},
+        {block , 0, 0     , 0     , 0},
+        {0     , 0, block4, 0     , 0},
+        {0     , 0, 0     , block2, block2},
+        {block3, 0, 0     , block2, block2}
+    };
+    for(int i = 0; i < 5; i++){
+        for(int j = 0; j < 5; j++){
+            ASSERT_TRUE(base->base[i][j] == true_matrix[i][j]);
+        }
+    }
+    Block*** distance_list;
+    Block** block_list;
+    int length;
+    base->generate_distance_list(base, &distance_list, &block_list, &length);
+    auto test_dist = [&](Block* target, int pos){
+        if(target == block){
+            ASSERT_TRUE(distance_list[pos][0] == block);
+            ASSERT_TRUE(distance_list[pos][1] == block4);
+            ASSERT_TRUE(distance_list[pos][2] == block3);
+            ASSERT_TRUE(distance_list[pos][3] == block2);
+        }else if(target == block2){
+            ASSERT_TRUE(distance_list[pos][0] == block2);
+            ASSERT_TRUE(distance_list[pos][1] == block4);
+            ASSERT_TRUE(distance_list[pos][2] == block);
+            ASSERT_TRUE(distance_list[pos][3] == block3);
+        }else if(target == block3){
+            ASSERT_TRUE(distance_list[pos][0] == block3);
+            ASSERT_TRUE(distance_list[pos][1] == block4);
+            ASSERT_TRUE(distance_list[pos][2] == block);
+            ASSERT_TRUE(distance_list[pos][3] == block2);
+        }else if(target == block4){
+            ASSERT_TRUE(distance_list[pos][0] == block4);
+            ASSERT_TRUE(distance_list[pos][1] == block);
+            ASSERT_TRUE(distance_list[pos][2] == block2);
+            ASSERT_TRUE(distance_list[pos][3] == block3);
+        }
+    };
+    for(int i = 0; i < length; i++){
+        test_dist(block_list[i], i);
+    }
 }
 
 int main() {

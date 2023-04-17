@@ -126,8 +126,8 @@ Processor* init_processor(int length, int height){
     self->base = create_base(length, height);
 
     // create and place the players
-    self->player[0]->object = create_player_object();
-    self->player[1]->object = create_player_object();
+    self->player[0]->object = create_player_object(BLUE_TROOP);
+    self->player[1]->object = create_player_object(RED_TROOP);
     self->player[0]->side = RED_TROOP;
     self->player[1]->side = BLUE_TROOP;
     self->player[0]->skill_num = 0;
@@ -219,6 +219,7 @@ void step(Processor *self){
     self->object_at_death_size = 0;
 
     // call the action method of all objects. (If the object is frozen, it will not be called)
+    // and call the anime method of all objects
     for(i = 0; i < block_num; i++){
         Object* object = (Object*)blocks[i]->any;
         if(object->status.frozen_degree == 0){

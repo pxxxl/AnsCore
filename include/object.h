@@ -20,6 +20,8 @@ struct Status{
     int burning_degree;
     int defending_degree;
     int weak_degree;
+
+    int clock;
 };
 
 
@@ -27,19 +29,18 @@ struct Config;
 typedef struct Config Config;
 struct Config{
     int max_hp;
-    int speed;
-    int damage;
-    int range;
-    int interval;
     int type;
     int side;
+    int interval;
 };
 
 
 struct Object{
-    //notice: the "status" is used by the processor
+    //notice: the "status" is used by the processor, and the storage is used by the object itself
+    //the "config" could be used by everyone
     Status status;
     Config config;
+    void* storage;
 
     Block* block;
     Processor* host;

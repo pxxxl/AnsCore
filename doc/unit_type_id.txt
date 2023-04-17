@@ -1,0 +1,6 @@
+100 player object(Blue 是 side1， Red 是 side2)
+101 obstacle wall
+102 obstacle grey wall
+103 obstacle tree
+104 obstacle stone
+106 ordinary bullet
