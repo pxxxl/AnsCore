@@ -53,6 +53,9 @@ struct ProcessorAPI{
     Object* (*get_object)(Processor *host, int x, int y);
     Object* (*find_closest_object_in_direction)(Processor *host, Object* object, int direction);
     Object* (*find_closest_object)(Processor *host, int x, int y);
+
+    // dont forget to free the result
+    void (*find_object_around)(Processor *host, Object* object, int radius, Object*** result, int* result_size);
     void (*generate_distance_list)(Processor *host, Object ****distance_list, Object*** blocks, int *length);
 
     BOOL (*is_valid_address)(Processor *host, int x, int y);

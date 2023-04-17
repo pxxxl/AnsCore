@@ -1,16 +1,16 @@
 #pragma once
 typedef struct Player{
-    int playerName;// only 1 & 2
-    int hp;// 0~100 convert to percentage
-    int* skills;// the tag of skill
-    int skillNum;// the num of skill player has
-    int selectSkill;    
+    int playerName;     // only 1 & 2
+    int hp;             // 0~100 convert to percentage
+    int* skills;        // the tag of skill
+    int skillNum;       // the num of skill player has
+    int selectSkill;    // the select skill, if -1 means no skill setected
 } Player;
 
 typedef struct InfoMove{
     int tag;
 
-// provide the start and destination information
+    // provide the start and destination information
     int x_start, y_start;
     int x_dest, y_dest;
 }InfoMove;
@@ -25,10 +25,11 @@ typedef struct InfoEffect{
 typedef struct Info{
     InfoMove *infomove;
     int lengthMove;
+    
     InfoEffect *infoeffect;
     int lengthEffect;
 } Info;
-/*
+
 Info* init_draw();
 
 void renew_backgrounds(int **obstacles, int length);
@@ -42,4 +43,3 @@ void draw_effect(InfoEffect infoEffect);
 
 void draw_image(int image_id, int x, int y);
 void clear_screen();
-*/

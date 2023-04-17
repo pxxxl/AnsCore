@@ -1,38 +1,29 @@
-#include "../include/qt_graphic_drive.h"
+#include "../include/qt/qt_graphic_drive.h"
+#include "../include/draw.h"
 #include <QApplication>
 #include <QtWidgets>
+
+MyWidget* widget = nullptr;
 
 int main(int argc, char* argv[])
 {
     QApplication app(argc, argv);
 
-    MyWidget* widget = new MyWidget;
+    widget = new MyWidget;
     widget->show();
 
-    KeyboardEventFilter* eventFilter = new KeyboardEventFilter;
-    app.installEventFilter(eventFilter);
-
     QTimer* timer = new QTimer;
-    QObject::connect(timer, &QTimer::timeout, [=]() {
-        static int count = 0;
-        static int refresh_count = 0;
-        static Info info = { "John", 30 };
-        if (count % 10 == 0)
-        {
-            widget->import_info(info);
-            refresh_count = 0;
-            info.age++;
+    auto info = init_draw();
+    QObject::connect(timer, &QTimer::timeout, [&]() {
+        static int cnt = 0;
+        if(cnt == 0){
+            import_info(info, NULL, 0, NULL, 0);
+            refresh(*info, cnt);
+        }else{
+            refresh(*info, cnt);
         }
-        widget->refresh();
-        count++;
-        refresh_count++;
-        if (refresh_count >= 10)
-        {
-            refresh_count = 0;
-            QCoreApplication::processEvents();
-        }
+        cnt++;
     });
     timer->start(100);
-
     return app.exec();
 }

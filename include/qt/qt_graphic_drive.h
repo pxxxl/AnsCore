@@ -7,7 +7,6 @@
 #include "../player_dash.h"
 #include "../macros.h"
 #include "../object.h"
-#include "../VGA_engine.h"
 
 extern PlayerDash player_dash;
 

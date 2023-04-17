@@ -45,18 +45,17 @@ struct Object{
     Block* block;
     Processor* host;
     ProcessorAPI* api;
-    void* self;
     
-    void (*birth)(void *self);
-    void (*action)(void *self);
-    void (*death)(void *self);
+    void (*birth)(Object *self);
+    void (*action)(Object *self);
+    void (*death)(Object *self);
 
-    void (*hurt)(void *self, int damage);
-    void (*heal)(void *self, int heal);
-    void (*freeze)(void *self, int degree);
-    void (*burn)(void *self, int degree);
-    void (*defend)(void *self, int degree);
-    void (*weak)(void *self, int degree);
+    void (*hurt)(Object *self, int damage);
+    void (*heal)(Object *self, int heal);
+    void (*freeze)(Object *self, int degree);
+    void (*burn)(Object *self, int degree);
+    void (*defend)(Object *self, int degree);
+    void (*weak)(Object *self, int degree);
 };
 
 struct Player{

@@ -19,6 +19,15 @@ Object* create_skill_box(){
 }
 
 // size 1*1, detect surrounding 3*3, if founded, suicide and give the player a skill
-static void skill_box_action(void* self){
-    
+static void skill_box_action(Object* self){
+    Object** result;
+    int result_size;
+    self->api->find_object_around(self->host, self, 1, &result, &result_size);
+    for(int i = 0; i < result_size; i++){
+        Object* res = result[i];
+        if(res->config.type == 100){
+            
+        }
+    }
+
 }
