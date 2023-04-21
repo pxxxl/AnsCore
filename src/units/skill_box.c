@@ -7,7 +7,7 @@ Object* create_skill_box(){
     set_object_status(obs, 1);
     obs->storage = NULL;
     obs->birth = default_object_birth;
-    obs->action = skill_box_action;
+    obs->action = default_object_action;
     obs->death = default_object_death;
     obs->hurt = default_persist_affect;
     obs->heal = default_persist_affect;
@@ -18,8 +18,10 @@ Object* create_skill_box(){
     return obs;
 }
 
+
 // size 1*1, detect surrounding 3*3, if founded, suicide and give the player a skill
 static void skill_box_action(Object* self){
+    /*
     Object** result;
     int result_size;
     self->api->find_object_around(self->host, self, 1, &result, &result_size);
@@ -29,5 +31,6 @@ static void skill_box_action(Object* self){
             
         }
     }
+    */
 
 }

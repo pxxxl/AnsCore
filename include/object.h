@@ -29,6 +29,8 @@ struct Config;
 typedef struct Config Config;
 struct Config{
     int max_hp;
+    int length;
+    int height;
     int type;
     int side;
     int interval;
@@ -58,14 +60,5 @@ struct Object{
     void (*weak)(Object *self, int degree);
 };
 
-struct Player{
-    Object* object;
-    int side;
 
-    int skill_tag[SKILL_NUM];
-    int skill_num;
-
-    // if -1, means no skill is chosen
-    int skill_choice;
-};
 

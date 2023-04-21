@@ -3,7 +3,6 @@
 #include <QPainter>
 #include <QKeyEvent>
 #include "../processor.h"
-#include "../anime.h"
 #include "../player_dash.h"
 #include "../macros.h"
 #include "../object.h"
@@ -142,10 +141,10 @@ void MyWidget::keyPressEvent(QKeyEvent *event)
         case Qt::Key_I:
             player_dash.player_2_change_skill_key = LEFT;
             break;
-        case Qt::Key_O:
+        case Qt::Key_P:
             player_dash.player_2_change_skill_key = RIGHT;
             break;
-        case Qt::Key_P:
+        case Qt::Key_O:
             player_dash.player_2_attack_key = TRUE;
             break;
         default:

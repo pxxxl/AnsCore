@@ -1,7 +1,5 @@
 #include "../include/base.h"
 
-#include <stddef.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 Block* detect_exist_block(Base *self, int x1, int y1, int x2, int y2);
@@ -14,14 +12,18 @@ void remove_block(Base *self, Block *block);
 void destroy_block(Base *self, Block *block);
 void del_block(Base *self, Block *block);
 void assign_data(Base* self, Block *block, void *any);
+Block* find_closest_block_around(Base *self, Block *block, int radius);
 Block* find_closest_block_in_direction(Base *self, Block *block, int direction);
 Block* find_closest_block(Base *self, Block *block);
 BOOL find_all_blocks(Base *self, int x1, int y1, int x2, int y2, Block **blocks, int *length);
 void generate_distance_list(Base *self, Block ****distance_list, Block*** block_list, int *length);
+BOOL is_valid_address(Base *self, int x, int y);
+BOOL at_edge(Base *self, Block* block);
+BOOL going_out_of_bound(Base *self, Block* block, int direction);
 
 
 // verify if the address is valid
-static BOOL is_valid_address(Base *self, int x, int y){
+BOOL is_valid_address(Base *self, int x, int y){
     if(x < 0 || x >= self->length || y < 0 || y >= self->height){
         return FALSE;
     }
@@ -92,10 +94,14 @@ Base* create_base(int length, int height){
     self->destroy_block = destroy_block;
     self->delete_block = del_block;
     self->assign_data = assign_data;
+    self->find_block_around = find_closest_block_around;
     self->find_closest_block_in_direction = find_closest_block_in_direction;
     self->find_closest_block = find_closest_block;
     self->find_all_blocks = find_all_blocks;
     self->generate_distance_list = generate_distance_list;
+    self->is_valid_address = is_valid_address;
+    self->at_edge = at_edge;
+    self->going_out_of_bound = going_out_of_bound;
     return self;
 }
 
@@ -470,7 +476,7 @@ Block* find_closest_block_in_direction(Base *self, Block *block, int direction){
 
 // scan the around of the block
 // if success, return the block, else return NULL
-static Block* find_closest_block_around(Base *self, Block *block, int radius){
+Block* find_closest_block_around(Base *self, Block *block, int radius){
     check_null_base_pointer("find_closest_block_around", self);
     check_null_block_pointer("find_closest_block_around", block);
     int i, j;
@@ -597,4 +603,47 @@ void generate_distance_list(Base *self, Block ****distance_list, Block*** block_
         free(dist_list[i]);
     }
     free(dist_list);
+}
+
+BOOL at_edge(Base *self, Block* block){
+    check_null_base_pointer("at_edge", self);
+    check_null_block_pointer("at_edge", block);
+    int upper_bound = block->y;
+    int lower_bound = block->y - block->height + 1;
+    int left_bound = block->x;
+    int right_bound = block->x + block->length - 1;
+    if(upper_bound == 0 || lower_bound == self->height - 1 || left_bound == 0 || right_bound == self->length - 1){
+        return TRUE;
+    }
+    return FALSE;
+}
+
+BOOL going_out_of_bound(Base *self, Block* block, int direction){
+    check_null_base_pointer("going_out_of_bound", self);
+    check_null_block_pointer("going_out_of_bound", block);
+    int upper_bound = block->y;
+    int lower_bound = block->y - block->height + 1;
+    int left_bound = block->x;
+    int right_bound = block->x + block->length - 1;
+    if(direction == UP){
+        if(upper_bound == 0){
+            return TRUE;
+        }
+    }
+    else if(direction == DOWN){
+        if(lower_bound == self->height - 1){
+            return TRUE;
+        }
+    }
+    else if(direction == LEFT){
+        if(left_bound == 0){
+            return TRUE;
+        }
+    }
+    else if(direction == RIGHT){
+        if(right_bound == self->length - 1){
+            return TRUE;
+        }
+    }
+    return FALSE;
 }

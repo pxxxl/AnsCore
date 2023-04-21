@@ -7,7 +7,7 @@ Object* create_obstacle_wall_object(){
     default_set_object_config(obs, 65535, 0, 0, 0, 0, 0, NEUTRAL);
     default_set_object_status(obs, 65535);
     obs->birth = default_object_birth;
-    obs->action = obstacle_wall_action;
+    obs->action = default_object_action;
     obs->death = default_object_death;
     obs->hurt = default_persist_affect;
     obs->heal = default_persist_affect;
@@ -18,7 +18,7 @@ Object* create_obstacle_wall_object(){
     return obs;
 }
 
-static obstacle_wall_action(Object* self){
+static void obstacle_wall_action(Object* self){
     AnimePack* pack = (AnimePack*)malloc(sizeof(AnimePack));
     pack->delay = 0;
     pack->pack_type = ANIME_PACK_TYPE_EFFECT_INFO;

@@ -1,4 +1,4 @@
-#include "../include/anime.h"
+#include "../include/anime_utils.h"
 
 void add_fixed_effect(Processor* host, int x, int y, int tag, int delay){
     AnimePack* pack = (AnimePack*)malloc(sizeof(AnimePack));

@@ -4,10 +4,116 @@
 #include "../include/macros.h"
 #include <malloc.h>
 
+void request_place(Processor *host, Object *source, Object *target, int x, int y);
+void request_move(Processor *host, Object *source, int direction, int step);
+void request_step(Processor *host, Object *source, int direction);
+void request_suiside(Processor *host, Object *source);
+void request_teleport(Processor *host, Object *source, int des_x, int des_y);
+void request_freeze(Processor *host, Object *source, Object* target, int degree);
+void request_burn(Processor *host, Object *source, Object* target, int degree);
+void request_defend(Processor *host, Object *source, Object* target, int degree);
+void request_weak(Processor *host, Object *source, Object* target, int degree);
+void request_heal(Processor *host, Object *source, Object* target, int heal);
+void request_hurt(Processor *host, Object *source, Object* target, int damage);
+void request_load_anime(Processor *host, AnimePack *pack);
+Object* detect_exist_object(Processor *host, int x1, int y1, int x2, int y2);
+Object* get_object(Processor *host, int x, int y);
+Object* find_closest_object_in_direction(Processor *host, Object* object, int direction);
+Object* find_closest_object(Processor *host, Object* object);
+Object* find_object_around(Processor *host, Object* object, int radius);
+void get_distance_list(Processor *host, Object ****distance_list, Object*** object_list, int *length);
+BOOL is_valid_address(Processor *host, int x, int y);
+BOOL cannot_hurt(Processor *host, Object* attacker, Object* defender);
+BOOL at_edge(Processor *host, Object* object);
+BOOL going_out_of_bound(Processor *host, Object* object, int direction);
+void step(Processor *self);
+PlayerDisplayPack processor_player_data_to_anime_player_data(Player* player);
+ProcessorAnimeData export_anime_data(Processor *self);
+void processAPIRequest(Processor *self, ProcessorAPIRequest *request);
+
+
+struct NOTE___Implement_init_and_destory{char A;};
+
+static void init_processor_api(Processor* self){
+    self->api = (ProcessorAPI*)malloc(sizeof(ProcessorAPI));
+    self->api->request_place = request_place;
+    self->api->request_move = request_move;
+    self->api->request_step = request_step;
+    self->api->request_suiside = request_suiside;
+    self->api->request_teleport = request_teleport;
+    self->api->request_freeze = request_freeze;
+    self->api->request_burn = request_burn;
+    self->api->request_defend = request_defend;
+    self->api->request_weak = request_weak;
+    self->api->request_heal = request_heal;
+    self->api->request_hurt = request_hurt;
+    self->api->request_load_anime = request_load_anime;
+
+    self->api->detect_exist_object = detect_exist_object;
+    self->api->get_object = get_object;
+    self->api->find_closest_object_in_direction = find_closest_object_in_direction;
+    self->api->find_closest_object = find_closest_object;
+    self->api->find_object_around = find_object_around;
+    self->api->get_distance_list = get_distance_list;
+
+    self->api->cannot_hurt = cannot_hurt;
+    self->api->is_valid_address = is_valid_address;
+    self->api->at_edge = at_edge;
+    self->api->going_out_of_bound = going_out_of_bound;
+}
+
+static void init_processor_player(Processor* self){
+    self->player[0].object = create_player_object(BLUE_TROOP);
+    self->player[1].object = create_player_object(RED_TROOP);
+    self->player[0].skill_num = 0;
+    self->player[1].skill_num = 0;
+    self->player[0].skill_choice = -1;
+    self->player[1].skill_choice = -1;
+}
+
+
+// init the processor
+Processor* init_processor(int length, int height){
+    // create the processor
+    Processor* self = (Processor*)malloc(sizeof(Processor));
+
+    // init the processor's fields
+    self->base = create_base(length, height);
+    init_processor_api(self);
+    init_processor_player(self);
+    self->anime_cache_size = 0;
+    self->object_at_birth_size = 0;
+    self->object_at_death_size = 0;
+
+    // create the processor's method
+    self->step = step;
+    self->export_anime_data = export_anime_data;
+
+    return self;
+}
+
+
+// destroy the processor
+void destroy_processor(Processor *self){
+    destroy_base(self->base);
+    free(self->api);
+    free(self);
+}
 
 
 
-// static functions
+
+
+
+
+
+
+
+
+
+
+struct NOTE___Implement_step_and_export_anime_data{char A;};
+
 // remove the object from the processor's base
 // but not destroy it
 static void remove_object_from_processor_base(Processor *self, Object *object){
@@ -19,170 +125,6 @@ static void destroy_object_from_processor(Processor *self, Object *object){
     self->base->destroy_block(self->base, object->block);
     free(object);
 }
-
-static PlayerDisplayPack processor_player_data_to_anime_player_data(Player* player){
-    PlayerDisplayPack pack;
-    pack.hp = player->object->status.hp;
-    pack.side = player->side;
-    pack.skill_num = player->skill_num;
-    pack.skill_choice = player->skill_choice;
-    int i = 0;
-    for(i = 0; i < SKILL_NUM; i++){
-        pack.skill_tag[i] = player->skill_tag[i];
-    }
-    return pack;
-}
-
-/*
-#define API_REQUEST_MAX_NUM 100             // the max number of the api request
-#define API_REQUEST_MOVE 1                  // move
-#define API_REQUEST_TELEPORT 2              // teleport
-#define API_REQUEST_FREEZE 3                // freeze
-#define API_REQUEST_BURN 4                  // burn
-#define API_REQUEST_DEFEND 5                // defend
-#define API_REQUEST_WEAK 6                  // weak
-#define API_REQUEST_HEAL 7                  // heal
-#define API_REQUEST_HURT 8                  // hurt
-#define API_REQUEST_LOAD_ANIME 9            // load anime
-
-struct ProcessorAPIRequest{
-    int type;
-    Object* source;
-    Object* target;
-    int x;
-    int y;
-    int ext_1;
-    int ext_2;
-    void* ext_3;
-};
-*/
-
-static void processAPIRequest(Processor *self, ProcessorAPIRequest *request){
-    switch(request->type){
-        case API_REQUEST_MOVE:
-            self->base->move_block(self->base, request->source, request->ext_1, request->ext_2);
-            break;
-        case API_REQUEST_TELEPORT:
-            self->base->teleport_block(self->base, request->source, request->x, request->y);
-            break;
-        case API_REQUEST_FREEZE:
-            request->target->freeze(request->target, request->ext_1);
-            break;
-        case API_REQUEST_BURN:
-            request->target->burn(request->target, request->ext_1);
-            break;
-        case API_REQUEST_DEFEND:
-            request->target->defend(request->target, request->ext_1);
-            break;
-        case API_REQUEST_WEAK:
-            request->target->weak(request->target, request->ext_1);
-            break;
-        case API_REQUEST_HEAL:
-            request->target->heal(request->target, request->ext_1);
-            break;
-        case API_REQUEST_HURT:
-            int hurt = request->ext_1;
-            if(request->target->status.defending_degree > 0){
-                hurt -= request->target->status.defending_degree;
-            }
-            if(request->source->status.weak_degree > 0){
-                hurt -= request->source->status.weak_degree;
-            }
-            if(hurt < 0){
-                hurt = 0;
-            }
-            request->target->hurt(request->target, hurt);
-            break;
-        case API_REQUEST_LOAD_ANIME:
-            self->anime_cache[self->anime_cache_size] = *((AnimePack*)request->ext_3);
-            self->anime_cache_size++;
-            break;
-        default:
-            break;
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-// init the processor
-Processor* init_processor(int length, int height){
-    // create the processor
-    Processor* self = (Processor*)malloc(sizeof(Processor));
-    self->anime_cache_size = 0;
-    self->place_object = place_object;
-    self->step = step;
-    self->export_anime_data = export_anime_data;
-
-    // create the base
-    self->base = create_base(length, height);
-
-    // create and place the players
-    self->player[0]->object = create_player_object(BLUE_TROOP);
-    self->player[1]->object = create_player_object(RED_TROOP);
-    self->player[0]->side = RED_TROOP;
-    self->player[1]->side = BLUE_TROOP;
-    self->player[0]->skill_num = 0;
-    self->player[1]->skill_num = 0;
-    self->player[0]->skill_choice = -1;
-    self->player[1]->skill_choice = -1;
-    self->place_object(self, self->player[0]->object, 0, BASE_MAX_Y - 3, 3, 3);
-    self->place_object(self, self->player[1]->object, BASE_MAX_X - 3, 0, 3, 3);
-
-    // create the birth object set
-    self->object_at_birth_size = 0;
-    self->object_at_death_size = 0;
-
-    // create the processor's api
-    self->api = (ProcessorAPI*)malloc(sizeof(ProcessorAPI));
-    self->api->request_move = request_move;
-    self->api->request_teleport = request_teleport;
-    self->api->request_freeze = request_freeze;
-    self->api->request_burn = request_burn;
-    self->api->request_defend = request_defend;
-    self->api->request_weak = request_weak;
-    self->api->request_heal = request_heal;
-    self->api->request_hurt = request_hurt;
-    self->api->detect_exist_object = detect_exist_object;
-    self->api->get_object = get_object;
-    self->api->find_closest_object_in_direction = find_closest_object_in_direction;
-    self->api->find_closest_object = find_closest_object;
-
-    return self;
-}
-
-
-// destroy the processor
-void destroy_processor(Processor *self){
-    destroy_base(self->base);
-    free(self->anime_cache);
-    free(self->api);
-    free(self);
-}
-
-
-// place an object at this place
-// return ptr to the object if success, return NULL if failed 
-// notice that the object's Block and Processor need not to be set by extern user
-Object* place_object(Processor *self, Object* object, int x, int y, int length, int height){
-    Block* block = self->base->create_block(self->base, x, y, length, height, UP);
-    if(block == NULL){
-        return NULL;
-    }
-    block->any = (void*)object;
-    object->block = block;
-    object->host = self;
-    return object;
-}
-
 
 // step the processor
 /* The processor performs a "step" of processing, which includes the following steps:
@@ -261,6 +203,19 @@ void step(Processor *self){
 }
 
 
+PlayerDisplayPack processor_player_data_to_anime_player_data(Player* player){
+    PlayerDisplayPack pack;
+    pack.hp = player->object->status.hp;
+    pack.side = player->object->config.side;
+    pack.skill_num = player->skill_num;
+    pack.skill_choice = player->skill_choice;
+    int i = 0;
+    for(i = 0; i < SKILL_NUM; i++){
+        pack.skill_tag[i] = player->skill_tag[i];
+    }
+    return pack;
+}
+
 // export the anime data
 ProcessorAnimeData export_anime_data(Processor *self){
     ProcessorAnimeData data;
@@ -274,14 +229,142 @@ ProcessorAnimeData export_anime_data(Processor *self){
         }
     }
     data.anime_pack_size = j;
-    data.player_display_pack[0] = processor_player_data_to_anime_player_data(self->player[0]);
-    data.player_display_pack[1] = processor_player_data_to_anime_player_data(self->player[1]);
+    data.player_display_pack[0] = processor_player_data_to_anime_player_data(&self->player[0]);
+    data.player_display_pack[1] = processor_player_data_to_anime_player_data(&self->player[1]);
     return data;
 }
 
 
-// below are provided to the objects
+
+
+
+
+
+
+
+
+
+/*
+#define API_REQUEST_MAX_NUM 100             // the max number of the api request
+#define API_REQUEST_MOVE 1                  // move
+#define API_REQUEST_TELEPORT 2              // teleport
+#define API_REQUEST_FREEZE 3                // freeze
+#define API_REQUEST_BURN 4                  // burn
+#define API_REQUEST_DEFEND 5                // defend
+#define API_REQUEST_WEAK 6                  // weak
+#define API_REQUEST_HEAL 7                  // heal
+#define API_REQUEST_HURT 8                  // hurt
+#define API_REQUEST_LOAD_ANIME 9            // load anime
+#define API_REQUEST_STEP 10                 // step
+#define API_REQUEST_PLACE 11                // place
+
+struct ProcessorAPIRequest{
+    int type;
+    Object* source;
+    Object* target;
+    int x;
+    int y;
+    int ext_1;
+    int ext_2;
+    void* ext_3;
+};
+*/
+struct NOTE___Implement_API_Request{char A;};
+
+static void place_object(Processor *self, Object* object, int x, int y, int length, int height){
+    Block* b = self->base->create_block(self->base, x, y, length, height, UP);
+    b->any = object;
+    object->block = b;
+    object->host = self;
+    object->api = self->api;
+}
+
+void processAPIRequest(Processor *self, ProcessorAPIRequest *request){
+    switch(request->type){
+        case API_REQUEST_MOVE:
+            self->base->move_block(self->base, request->source->block, request->ext_1, request->ext_2);
+            break;
+        case API_REQUEST_TELEPORT:
+            self->base->teleport_block(self->base, request->x, request->y, request->source->block);
+            break;
+        case API_REQUEST_FREEZE:
+            request->target->freeze(request->target, request->ext_1);
+            break;
+        case API_REQUEST_BURN:
+            request->target->burn(request->target, request->ext_1);
+            break;
+        case API_REQUEST_DEFEND:
+            request->target->defend(request->target, request->ext_1);
+            break;
+        case API_REQUEST_WEAK:
+            request->target->weak(request->target, request->ext_1);
+            break;
+        case API_REQUEST_HEAL:
+            request->target->heal(request->target, request->ext_1);
+            break;
+        case API_REQUEST_HURT:
+            int hurt = request->ext_1;
+            if(request->target->status.defending_degree > 0){
+                hurt -= request->target->status.defending_degree;
+            }
+            if(request->source->status.weak_degree > 0){
+                hurt -= request->source->status.weak_degree;
+            }
+            if(hurt < 0){
+                hurt = 0;
+            }
+            request->target->hurt(request->target, hurt);
+            break;
+        case API_REQUEST_LOAD_ANIME:
+            self->anime_cache[self->anime_cache_size] = *((AnimePack*)request->ext_3);
+            self->anime_cache_size++;
+            break;
+        case API_REQUEST_STEP:
+            self->base->move_block(self->base, request->source->block, request->ext_1, 1);
+            break;
+        case API_REQUEST_PLACE:
+            place_object(self, request->target, request->x, request->y, request->ext_1, request->ext_2);
+            break;
+        case API_REQUEST_SUISIDE:
+            
+        default:
+            break;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// below are apis that are provided to the objects
 // objects could only use these functions to interact with the processor or other objects
+
+// "source" request to place target at x, y
+void request_place(Processor *host, Object *source, Object *target, int x, int y){
+    if(host->request_queue_size >= API_REQUEST_MAX_NUM) return;
+    ProcessorAPIRequest* request = &(host->request_queue[host->request_queue_size++]);
+    request->type = API_REQUEST_PLACE;
+    request->source = source;
+    request->target = target;
+    request->x = x;
+    request->y = y;
+}
 
 // request to move the object
 void request_move(Processor *host, Object *source, int direction, int step){
@@ -291,6 +374,22 @@ void request_move(Processor *host, Object *source, int direction, int step){
     request->source = source;
     request->ext_1 = direction;
     request->ext_2 = step;
+}
+
+// move the object to the direction for 1 block
+void request_step(Processor *host, Object *source, int direction){
+    if(host->request_queue_size >= API_REQUEST_MAX_NUM) return;
+    ProcessorAPIRequest* request = &(host->request_queue[host->request_queue_size++]);
+    request->type = API_REQUEST_STEP;
+    request->source = source;
+    request->ext_1 = direction;
+}
+
+void request_suiside(Processor *host, Object *source){
+    if(host->request_queue_size >= API_REQUEST_MAX_NUM) return;
+    ProcessorAPIRequest* request = &(host->request_queue[host->request_queue_size++]);
+    request->type = API_REQUEST_SUISIDE;
+    request->source = source;
 }
 
 // request to teleport the object
@@ -404,4 +503,73 @@ Object* find_closest_object(Processor *host, Object* object){
     return host->base->find_closest_block(host->base, object->block)->any;
 }
 
+Object* find_object_around(Processor* host, Object* object, int radius){
+    return host->base->find_block_around(host->base, object->block, radius)->any;
+}
 
+static void generate_distance_list(Processor* host){
+    Block*** distance_list;
+    Block** blocks;
+    int length;
+    host->base->generate_distance_list(host->base, &distance_list, &blocks, &length);
+    host->distance_list = (Object***)malloc(sizeof(Object**) * length);
+    for(int i = 0; i < length; i++){
+        host->distance_list[i] = (Object**)malloc(sizeof(Object*) * length);
+    }
+    host->object_list = (Object**)malloc(sizeof(Object*) * length);
+    host->object_list_length = length;
+    for(int i = 0; i < length; i++){
+        host->object_list[i] = blocks[i]->any;
+        for(int j = 0; j < length; j++){
+            host->distance_list[i][j] = distance_list[i][j]->any;
+        }
+    }
+    free(distance_list);
+    free(blocks);
+    host->distance_list_generated = TRUE;
+}
+
+void get_distance_list(Processor* host, Object ****distance_list, Object*** object_list, int* object_list_length){
+    if(!(host->distance_list_generated)){
+        generate_distance_list(host);
+    }
+    *distance_list = host->distance_list;
+    *object_list = host->object_list;
+    *object_list_length = host->object_list_length;
+    return;
+}
+
+BOOL is_valid_address(Processor* host, int x, int y){
+    return host->base->is_valid_address(host, x, y);
+}
+
+
+BOOL cannot_hurt(Processor *host, Object* attacker, Object* defender){
+    int attacker_side = attacker->config.side;
+    int defender_side = defender->config.side;
+    switch(attacker_side){
+        case RED_TROOP:
+            if(defender_side == RED_TROOP || defender_side == RED_BULLET) return TRUE;
+            break;
+        case BLUE_TROOP:
+            if(defender_side == BLUE_TROOP || defender_side == BLUE_BULLET) return TRUE;
+            break;
+        case RED_BULLET:
+            if(defender_side == RED_TROOP || defender_side == RED_BULLET) return TRUE;
+            break;
+        case BLUE_BULLET:
+            if(defender_side == BLUE_TROOP || defender_side == BLUE_BULLET) return TRUE;
+            break;
+    }
+    return FALSE;
+}
+
+
+BOOL at_edge(Processor *host, Object* object){
+    return host->base->at_edge(host, object->block);
+}
+
+
+BOOL going_out_of_bound(Processor *host, Object* object, int direction){
+    return host->base->going_out_of_bound(host, object->block, direction);
+}

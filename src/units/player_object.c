@@ -15,30 +15,6 @@ typedef struct PlayerObjectStorage{
     int player_use_skill_key;
 } PlayerObjectStorage;
 
-Object* create_player_object(int side){
-    Object* object = (Object*)malloc(sizeof(Object));
-
-    default_set_object_status(object, 100);
-    if(side != RED_TROOP && side != BLUE_TROOP){
-        printf("Error: side must be RED_TROOP or BLUE_TROOP");
-        exit(1);
-    }
-    set_object_config(object, 100, side, 100);
-    object->storage = (PlayerObjectStorage*)malloc(sizeof(PlayerObjectStorage));
-
-    object->birth = default_object_birth;
-    object->action = player_object_action;
-    object->anime = default_object_anime;
-    object->death = default_object_death;
-    object->hurt = default_object_hurt;
-    object->heal = default_object_heal;
-    object->freeze = default_object_freeze;
-    object->burn = default_object_burn;
-    object->defend = default_object_defend;
-    object->weak = default_object_weak;
-    return object;
-}
-
 static void player_object_action(void *self){
     Object* object = (Object*)self;
     PlayerObjectStorage* storage = (PlayerObjectStorage*)object->storage;
@@ -55,3 +31,27 @@ static void player_object_action(void *self){
     }
     
 }
+
+Object* create_player_object(int side){
+    Object* object = (Object*)malloc(sizeof(Object));
+
+    default_set_object_status(object, 100);
+    if(side != RED_TROOP && side != BLUE_TROOP){
+        printf("Error: side must be RED_TROOP or BLUE_TROOP");
+        exit(1);
+    }
+    set_object_config(object, 100, side, 100, PLAYER_OBJECT_INTERVAL);
+    object->storage = (PlayerObjectStorage*)malloc(sizeof(PlayerObjectStorage));
+
+    object->birth = default_object_birth;
+    object->action = player_object_action;
+    object->death = default_object_death;
+    object->hurt = default_object_hurt;
+    object->heal = default_object_heal;
+    object->freeze = default_object_freeze;
+    object->burn = default_object_burn;
+    object->defend = default_object_defend;
+    object->weak = default_object_weak;
+    return object;
+}
+

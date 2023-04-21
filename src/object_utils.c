@@ -65,10 +65,12 @@ void set_object_default_storage(Object* object, int speed, int damage, int range
 }
 
 // set the object's config
-void set_object_config(Object* object, int type, int side, int max_hp, int interval){
+void set_object_config(Object* object, int type, int side, int max_hp, int length, int height, int interval){
     object->config.type = type;
     object->config.side = side;
     object->config.max_hp = max_hp;
+    object->config.length = length;
+    object->config.height = height;
     object->config.interval = interval;
 }
 

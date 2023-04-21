@@ -5,13 +5,15 @@
 #include "xintc_l.h"
 #include "xtmrctr_l.h"
 #include "mb_interface.h"
+#include "../player_dash.h"
 
 u8 scancode[256];
 void scancode_ascii();
 void key_interrupt();
 int write_index = 0;
+extern PlayerDash player_dash;
 
-u8 key[256][2] = {
+u8 key_to_char[256][2] = {
     {0x15, 'q'},
     {0x1d, 'w'},
     {0x24, 'e'},
@@ -40,7 +42,7 @@ u8 key[256][2] = {
     {0x3a, 'm'}
 };
 
-u8 key[256][2] = {
+u8 char_to_key[256][2] = {
 {'q', 0x15},
 {'w', 0x1d},
 {'e', 0x24},
@@ -81,26 +83,42 @@ void key_interrupt(){
     );
 }
 
-void scancode_Ascii(){
+char read_char(int read_index, char* release){
+    if(scancode[read_index] == 0xf0){
+        *release = 1;
+        return 0;
+    }
+    if(*release == 1){
+        *release = 0;
+        return 0;
+    }
+    // now we have a key press
+    char cha = key_to_char[scancode[read_index]][1];
+    switch(cha){
+        case 'q':player_dash.player_1_use_skill_key = TRUE; break;
+        case 'w':player_dash.player_1_direction_key = UP; break;
+        case 'e':player_dash.player_1_change_skill_key = LEFT; break;
+        case 'r':player_dash.player_1_attack_key = TRUE; break;
+        case 't':player_dash.player_1_change_skill_key = RIGHT; break;
+        case 's':player_dash.player_1_direction_key = DOWN; break;
+        case 'a':player_dash.player_1_direction_key = LEFT; break;
+        case 'd':player_dash.player_1_direction_key = RIGHT; break;
+
+        case 'y':player_dash.player_2_use_skill_key = TRUE; break;
+        case 'u':player_dash.player_2_direction_key = UP; break;
+        case 'i':player_dash.player_2_change_skill_key = LEFT; break;
+        case 'o':player_dash.player_2_attack_key = TRUE; break;
+        case 'p':player_dash.player_2_change_skill_key = RIGHT; break;
+        case 'j':player_dash.player_2_direction_key = DOWN; break;
+        case 'h':player_dash.player_2_direction_key = LEFT; break;
+        case 'k':player_dash.player_2_direction_key = RIGHT; break;
+    }
+}
+
+void loop(){
     int read_index = 0;
-    int release = 0;
+    char release = 0;
     while(1){
-        if(read_index != write_index){
-            switch(scancode[read_index]){
-                case 0xf0:
-                    release = 1;
-                    break;
-                default:
-                    if(release == 0){
-                        
-                    } else {
-                        release = 0;
-                    }
-            }
-            read_index++;
-            if(read_index == 256){
-                read_index = 0;
-            }
-        }
+        read_char(read_index, &release);
     }
 }

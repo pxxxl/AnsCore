@@ -37,6 +37,9 @@
 #define API_REQUEST_HEAL 7                  // heal
 #define API_REQUEST_HURT 8                  // hurt
 #define API_REQUEST_LOAD_ANIME 9            // load anime
+#define API_REQUEST_STEP 10                 // step
+#define API_REQUEST_PLACE 11                // place
+#define API_REQUEST_SUISIDE 12              // suiside
 
 
 // Anime
@@ -53,7 +56,7 @@
 #define BLOCK_PIXEL_Y 16
 
 // intervals
-#define PLAYER_OBJECT_INTERVAL 3
+#define PLAYER_OBJECT_INTERVAL 4
 #define OBSTACLE_OBJECT_INTERVAL 65535
 #define BULLET_OBJECT_INTERVAL 0
 #define SKILL_BOX_INTERVAL 0
