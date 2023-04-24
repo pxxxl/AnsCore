@@ -1,6 +1,6 @@
 #pragma once
 
-#include "macros.h"
+#include "../macros.h"
 
 typedef struct Block{               // Position : up left corner
     int x;
@@ -10,6 +10,9 @@ typedef struct Block{               // Position : up left corner
     int orientation;                // UP, DOWN, LEFT, RIGHT
     void* any;                      // this module did not release the "any" pointer
 } Block;
+
+struct Base;
+typedef struct Base Base;
 
 
 typedef struct Base
@@ -76,6 +79,8 @@ typedef struct Base
     // the block in block list are all the blocks in the base
     // the distance list's row is the blocks in the block list, the column block is sorted by distance
     void (*generate_distance_list)(Base *self, Block ****distance_list, Block*** blocks, int *length);
+    void (*generate_distance_list_gc)(Base *self, Block ***distance_list, Block** blocks, int length);
+
     BOOL (*is_valid_address)(Base *self, int x, int y);
     BOOL (*at_edge)(Base *self, Block* block);
     BOOL (*going_out_of_bound)(Base *self, Block* block, int direction);

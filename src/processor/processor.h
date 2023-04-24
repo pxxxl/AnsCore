@@ -12,19 +12,31 @@ typedef struct ProcessorAnimeData ProcessorAnimeData;
 struct ProcessorAPIRequest;
 typedef struct ProcessorAPIRequest ProcessorAPIRequest;
 
+#define API_REQUEST_MAX_NUM 10000             // the max number of the api request
+#define API_REQUEST_MOVE 1                  // move
+#define API_REQUEST_TELEPORT 2              // teleport
+#define API_REQUEST_FREEZE 3                // freeze
+#define API_REQUEST_BURN 4                  // burn
+#define API_REQUEST_DEFEND 5                // defend
+#define API_REQUEST_WEAK 6                  // weak
+#define API_REQUEST_HEAL 7                  // heal
+#define API_REQUEST_HURT 8                  // hurt
+#define API_REQUEST_LOAD_ANIME 9            // load anime
+#define API_REQUEST_STEP 10                 // step
+#define API_REQUEST_PLACE 11                // place
+#define API_REQUEST_SUISIDE 12              // suiside
 
-#include "base.h"
-#include "object.h"
-#include "macros.h"
 
-#include "units.h"
+#include "../base/base.h"
+#include "../object/object.h"
+#include "../macros.h"
 
-typedef struct Player{
+typedef struct PlayerObject{
     Object* object;
     int skill_tag[SKILL_NUM];
     int skill_num;
     int skill_choice;// if -1, means no skill is chosen
-}Player;
+}PlayerObject;
 
 typedef struct AnimePack{
     int pack_type;              //ANIME_PACK_TYPE_MOVE_INFO or ANIME_PACK_TYPE_EFFECT_INFO
@@ -42,6 +54,18 @@ typedef struct PlayerDisplayPack{
     int skill_choice;            // if -1, means no skill is chosen
 } PlayerDisplayPack;
 
+typedef struct PlayerDash{
+    int player_1_direction_key;
+    int player_1_attack_key;
+    int player_1_change_skill_key;
+    int player_1_use_skill_key;
+    
+    int player_2_direction_key;
+    int player_2_attack_key;
+    int player_2_change_skill_key;
+    int player_2_use_skill_key;
+}PlayerDash;
+
 struct ProcessorAnimeData{
     AnimePack anime_pack[ANIME_PACK_CACHE_MAX_LENGTH];
     int anime_pack_size;
@@ -57,13 +81,14 @@ struct ProcessorAPIRequest{
     int y;
     int ext_1;
     int ext_2;
-    void* ext_3;
+    int ext_3;
+    void* ext_4;
 };
 
 
 struct ProcessorAPI{
     // make best effort to do the action
-    void (*request_place)(Processor *host, Object *source, Object *target, int x, int y);
+    void (*request_place)(Processor *host, Object *source, Object *target, int x, int y, int ori);
     void (*request_move)(Processor *host, Object *source, int direction, int step);
     void (*request_step)(Processor *host, Object *source, int direction);
     void (*request_suiside)(Processor *host, Object *source);
@@ -77,6 +102,10 @@ struct ProcessorAPI{
 
     // NOTICE: USER SHOULD USE MALLOC TO ALLOCATE MEMORY FOR THE PACK, AND DON'T FREE IT
     void (*request_load_anime)(Processor *host, AnimePack *pack);
+    void (*request_load_static_effect)(Processor* host, int x, int y, int tag, int delay);
+    void (*request_load_static_sustaining_effect)(Processor* host, int x, int y, int tags[], int length, int delay);
+    void (*request_load_dynamic_effect)(Processor* host, int x, int y, int des_x, int des_y, int tag, int delay);
+    void (*request_load_move_effect)(Processor* host, int x, int y, int step, int direction, int tag, int delay);
 
     // range is [x1, x2) and [y1, y2), invalid address excluded automately
     Object* (*detect_exist_object)(Processor *host, int x1, int y1, int x2, int y2);
@@ -112,7 +141,7 @@ struct ProcessorAPI{
 struct Processor{
     Base *base;
     ProcessorAPI *api;
-    Player player[2];
+    PlayerObject player[2];
 
     AnimePack anime_cache[ANIME_PACK_CACHE_MAX_LENGTH];
     int anime_cache_size;
@@ -140,3 +169,6 @@ Processor* init_processor(int length, int height);
 
 // destroy the processor
 void destroy_processor(Processor *self);
+
+void clear_player_dash(PlayerDash *player_dash, int side);
+

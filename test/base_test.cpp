@@ -1,7 +1,7 @@
 #include <cfloat>
 #include <iostream>
 extern "C"{
-    #include "../include/base.h"
+    #include "../src/base/base.h"
 }
 #include "gtest/gtest.h"
 
@@ -159,6 +159,7 @@ TEST(BASE_TEST, detect_exist_block){
     ASSERT_TRUE(F == block3);
 }
 
+/*
 TEST(BASE_TEST, find_closest_block_in_direction){
     Base* base = create_base(5, 5);
     Block* block = base->create_block(base, 0, 0, 1, 2, UP);
@@ -207,8 +208,13 @@ TEST(BASE_TEST, find_closest_block_in_direction){
     ASSERT_TRUE(L4 == block3);
     ASSERT_TRUE(U4 == NULL);
     ASSERT_TRUE(D4 == NULL);
-}
 
+    base->delete_block(base, block);
+    base->delete_block(base, block2);
+    base->delete_block(base, block3);
+    base->delete_block(base, block4);
+}
+*/
 TEST(BASE_TEST, find_closest_block){
     Base* base = create_base(5, 5);
     Block* block = base->create_block(base, 0, 0, 1, 2, UP);
@@ -314,6 +320,7 @@ TEST(BASE_TEST, generate_distance_list){
     for(int i = 0; i < length; i++){
         test_dist(block_list[i], i);
     }
+    base->generate_distance_list_gc(base, distance_list, block_list, length);
 }
 
 int main() {

@@ -1,4 +1,4 @@
-#include "../include/object_utils.h"
+#include "object.h"
 
 void default_object_birth(void *self){
     // do nothing
@@ -65,13 +65,23 @@ void set_object_default_storage(Object* object, int speed, int damage, int range
 }
 
 // set the object's config
-void set_object_config(Object* object, int type, int side, int max_hp, int length, int height, int interval){
+void set_object_config(Object* object, int type, int side, int max_hp, int length, int height, int interval, BOOL auto_load_anime){
     object->config.type = type;
     object->config.side = side;
     object->config.max_hp = max_hp;
     object->config.length = length;
     object->config.height = height;
     object->config.interval = interval;
+    object->config.auto_load_anime = auto_load_anime;
+}
+
+void set_object_anime(Object* object, BOOL direction_4, int up_ori_image, int left_ori_image, int right_ori_image, int down_ori_image, int no_ori_image){
+    object->anime.direction_4 = direction_4;
+    object->anime.ori_image[UP] = up_ori_image;
+    object->anime.ori_image[LEFT] = left_ori_image;
+    object->anime.ori_image[RIGHT] = right_ori_image;
+    object->anime.ori_image[DOWN] = down_ori_image;
+    object->anime.ori_image[NONE] = no_ori_image;
 }
 
 // do nothing

@@ -1,4 +1,4 @@
-#include "../include/base.h"
+#include "base.h"
 
 #include <stdlib.h>
 
@@ -17,6 +17,7 @@ Block* find_closest_block_in_direction(Base *self, Block *block, int direction);
 Block* find_closest_block(Base *self, Block *block);
 BOOL find_all_blocks(Base *self, int x1, int y1, int x2, int y2, Block **blocks, int *length);
 void generate_distance_list(Base *self, Block ****distance_list, Block*** block_list, int *length);
+void generate_distance_list_gc(Base *self, Block ***distance_list, Block** blocks, int length);
 BOOL is_valid_address(Base *self, int x, int y);
 BOOL at_edge(Base *self, Block* block);
 BOOL going_out_of_bound(Base *self, Block* block, int direction);
@@ -99,6 +100,7 @@ Base* create_base(int length, int height){
     self->find_closest_block = find_closest_block;
     self->find_all_blocks = find_all_blocks;
     self->generate_distance_list = generate_distance_list;
+    self->generate_distance_list_gc = generate_distance_list_gc;
     self->is_valid_address = is_valid_address;
     self->at_edge = at_edge;
     self->going_out_of_bound = going_out_of_bound;
@@ -128,13 +130,13 @@ void destroy_base(Base *self){
 // detect if there is an block in the area, return NULL if not, return the first block if there is
 // [x1 x2), [y1 y2)
 Block* detect_exist_block(Base *self, int x1, int y1, int x2, int y2){
-    check_null_base_pointer("detect_exist_block", self);
-    check_two_address_bound("detect_exist_block", self, x1, y1, x2-1, y2-1);
     int i, j;
     for(i = y1; i < y2; i++){
         for(j = x1; j < x2; j++){
-            if(self->base[i][j] != NULL){
-                return self->base[i][j];
+            if(self->is_valid_address(self, j, i)){
+                if(self->base[i][j] != NULL){
+                    return self->base[i][j];
+                }
             }
         }
     }
@@ -254,8 +256,7 @@ BOOL move_block(Base *self, Block *block, int direction, int step){
     }
     if(!is_valid_address(self, des_x, des_y) ||    // up left corner
        !is_valid_address(self, des_x+block->length-1, des_y+block->height-1)){    // down right corner
-        printf("ERROR: invalid address in move_block");
-        exit(1);
+        return FALSE;
     }
     int i, j;
     for(i = block->y; i < block->y+block->height; i++){
@@ -405,6 +406,7 @@ Block* find_closest_block_in_direction(Base *self, Block *block, int direction){
             }
             des_x = expect_pos;
             des_y = expect;
+            free(touch_position);
             break;
         case DOWN:
             touch_position = (int*)malloc(sizeof(int)*block->length);
@@ -425,6 +427,7 @@ Block* find_closest_block_in_direction(Base *self, Block *block, int direction){
             }
             des_x = expect_pos;
             des_y = expect;
+            free(touch_position);
             break;
         case LEFT:
             touch_position = (int*)malloc(sizeof(int)*block->height);
@@ -445,6 +448,7 @@ Block* find_closest_block_in_direction(Base *self, Block *block, int direction){
             }
             des_x = expect;
             des_y = expect_pos;
+            free(touch_position);
             break;
         case RIGHT:
             touch_position = (int*)malloc(sizeof(int)*block->height);
@@ -466,6 +470,7 @@ Block* find_closest_block_in_direction(Base *self, Block *block, int direction){
             }
             des_x = expect;
             des_y = expect_pos;
+            free(touch_position);
             break;
     }
     if(is_valid_address(self, des_x, des_y)){
@@ -560,9 +565,9 @@ BOOL find_all_blocks(Base *self, int x1, int y1, int x2, int y2, Block **blocks,
 // after call, the distance list and the block list is mallocd.
 // distance_list is a 2d array of Block*, block_list is a 1d array of Block*
 void generate_distance_list(Base *self, Block ****distance_list, Block*** block_list, int *length){
-    Block **list = (Block**)malloc(sizeof(Block*) * self->length * self->height); 
+    (*block_list) = (Block**)malloc(sizeof(Block*) * self->length * self->height); 
     int list_length = 0;
-    find_all_blocks(self, 0, 0, self->length, self->height, list, &list_length);
+    find_all_blocks(self, 0, 0, self->length, self->height, (*block_list), &list_length);
     float **dist_list = (float**)malloc(sizeof(float*) * list_length);
     (*distance_list) = (Block***)malloc(sizeof(Block*) * list_length);
     for (int i = 0; i < list_length; i++){
@@ -571,7 +576,7 @@ void generate_distance_list(Base *self, Block ****distance_list, Block*** block_
     }
     for (int i = 0; i < list_length; i++){
         for (int j = 0; j < list_length; j++){
-            dist_list[i][j] = (list[i]->x - list[j]->x)*(list[i]->x - list[j]->x) + (list[i]->y - list[j]->y)*(list[i]->y - list[j]->y);
+            dist_list[i][j] = ((*block_list)[i]->x - (*block_list)[j]->x)*((*block_list)[i]->x - (*block_list)[j]->x) + ((*block_list)[i]->y - (*block_list)[j]->y)*((*block_list)[i]->y - (*block_list)[j]->y);
         }
     }
 
@@ -589,13 +594,12 @@ void generate_distance_list(Base *self, Block ****distance_list, Block*** block_
                 }
             }
             // fill the min_index block
-            (*distance_list)[i][j] = list[min_index];
+            (*distance_list)[i][j] = (*block_list)[min_index];
             // set the distance to a big number
             dist_list[i][min_index] = 100000000;
         }
     }
     //return the list and the length
-    block_list = &list;
     *length = list_length;
 
     // free the dist list
@@ -603,6 +607,14 @@ void generate_distance_list(Base *self, Block ****distance_list, Block*** block_
         free(dist_list[i]);
     }
     free(dist_list);
+}
+
+void generate_distance_list_gc(Base *self, Block ***distance_list, Block** blocks, int length){
+    for(int i = 0; i < length; i++){
+        free(distance_list[i]);
+    }
+    free(distance_list);
+    free(blocks);
 }
 
 BOOL at_edge(Base *self, Block* block){

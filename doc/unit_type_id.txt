@@ -4,3 +4,7 @@
 103 obstacle tree
 104 obstacle stone
 106 ordinary bullet
+107 test object
+
+108 tesla tower
+109 skill box
