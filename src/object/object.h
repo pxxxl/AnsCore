@@ -93,31 +93,31 @@ void set_object_status(Object* object, int hp);
 void set_object_anime(Object* object, BOOL direction_4, int up_ori_image, int left_ori_image, int right_ori_image, int down_ori_image, int no_ori_image);
 
 // do nothing
-void default_object_birth(void *self);
+void default_object_birth(Object *self);
 
 // do nothing
-void default_object_action(void *self);
+void default_object_action(Object *self);
 
 // do nothing
-void default_object_death(void *self);
+void default_object_death(Object *self);
 
 // object->status.hp -= damage;
-void default_object_hurt(void *self, int damage);
+void default_object_hurt(Object *self, int damage);
 
 // heal object, but not over max_hp
-void default_object_heal(void *self, int heal);
+void default_object_heal(Object *self, int heal);
 
 // object->status.frozen_degree = degree;
-void default_object_freeze(void *self, int degree);
+void default_object_freeze(Object *self, int degree);
 
 // object->status.burning_degree = degree;
-void default_object_burn(void *self, int degree);
+void default_object_burn(Object *self, int degree);
 
 // object->status.defending_degree = degree;
-void default_object_defend(void *self, int degree);
+void default_object_defend(Object *self, int degree);
 
 // object->status.weak_degree = degree;
-void default_object_weak(void *self, int degree);
+void default_object_weak(Object *self, int degree);
 
 // do nothing
-void default_persist_affect(void *self, int affect);
+void default_persist_affect(Object *self, int affect);

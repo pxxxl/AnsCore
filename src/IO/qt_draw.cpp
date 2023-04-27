@@ -67,9 +67,25 @@ void MyWidget::refresh()
     m_counter++;
 }
 
+void MyWidget::key_step(){
+    if(!key_queueA.empty()){
+        if(key_queueA.back() == Qt::Key_W)player_dash.player_1_direction_key = UP;
+        if(key_queueA.back() == Qt::Key_S)player_dash.player_1_direction_key = DOWN;
+        if(key_queueA.back() == Qt::Key_A)player_dash.player_1_direction_key = LEFT;
+        if(key_queueA.back() == Qt::Key_D)player_dash.player_1_direction_key = RIGHT;
+    }
+    if(!key_queueB.empty()){
+        if(key_queueB.back() == Qt::Key_U)player_dash.player_2_direction_key = UP;
+        if(key_queueB.back() == Qt::Key_J)player_dash.player_2_direction_key = DOWN;
+        if(key_queueB.back() == Qt::Key_H)player_dash.player_2_direction_key = LEFT;
+        if(key_queueB.back() == Qt::Key_K)player_dash.player_2_direction_key = RIGHT;
+    }
+}
+
 void MyWidget::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
+    painter.drawImage(0, 0, m_images.value(501));
     for (int i = 0; i < m_info.lengthEffect; i++) {
         int tag = m_info.infoeffect[i].tag;
         int x = m_info.infoeffect[i].x;
@@ -92,6 +108,7 @@ void MyWidget::paintEvent(QPaintEvent *event)
             painter.drawImage(x, y, image);
         }
     }
+
 }
 
 void MyWidget::keyPressEvent(QKeyEvent *event)
@@ -108,12 +125,41 @@ void MyWidget::keyPressEvent(QKeyEvent *event)
     if(event->key() == Qt::Key_J)player_dash.player_2_direction_key = DOWN;
     if(event->key() == Qt::Key_H)player_dash.player_2_direction_key = LEFT;
     if(event->key() == Qt::Key_K)player_dash.player_2_direction_key = RIGHT;
-    if(event->key() == Qt::Key_Y)player_dash.player_2_use_skill_key = TRUE;
+    if(event->key() == Qt::Key_P)player_dash.player_2_use_skill_key = TRUE;
     if(event->key() == Qt::Key_I)player_dash.player_2_change_skill_key = LEFT;
-    if(event->key() == Qt::Key_P)player_dash.player_2_change_skill_key = RIGHT;
+    if(event->key() == Qt::Key_Y)player_dash.player_2_change_skill_key = RIGHT;
     if(event->key() == Qt::Key_O)player_dash.player_2_attack_key = TRUE;
+    // if wasdhujk, push back:
+    if(event->key() == Qt::Key_W || event->key() == Qt::Key_S || event->key() == Qt::Key_A || event->key() == Qt::Key_D){
+        key_queueA.push_back(event->key());
+    }
+    if(event->key() == Qt::Key_U || event->key() == Qt::Key_J || event->key() == Qt::Key_H || event->key() == Qt::Key_K){
+        key_queueB.push_back(event->key());
+    }
+    
 }
-extern MyWidget* widget;
+
+void MyWidget::keyReleaseEvent(QKeyEvent *event)
+{
+    if(event->key() == Qt::Key_W || event->key() == Qt::Key_S || event->key() == Qt::Key_A || event->key() == Qt::Key_D){
+        key_queueA.removeIf([event](int key){return key == event->key();});
+    }
+    if(event->key() == Qt::Key_U || event->key() == Qt::Key_J || event->key() == Qt::Key_H || event->key() == Qt::Key_K){
+        key_queueB.removeIf([event](int key){return key == event->key();});
+    }
+    if(key_queueA.empty()){
+        keyPressingA = 0;
+    }else{
+        keyPressingA = key_queueA.back();
+    }
+    if(key_queueB.empty()){
+        keyPressingB = 0;
+    }else{
+        keyPressingB = key_queueB.back();
+    }
+}
+
+extern TWidget* widget;
 
 Info* init_draw(){
     Info* p = (Info*)malloc(sizeof(Info));
@@ -125,7 +171,10 @@ Info* init_draw(){
 }
 
 void renew_backgrounds(int **obstacles, int length){}
-void renew_status(Player players[2]){}
+void renew_status(Player players[2]){
+    widget->refresh_player(players);
+    widget->refresh_skill(players);
+}
 
 void import_info(Info *info, InfoMove *infomove, int lengthMove, InfoEffect *infoeffect, int lengthEffect){
     info->lengthEffect = lengthEffect;
@@ -137,6 +186,15 @@ void import_info(Info *info, InfoMove *infomove, int lengthMove, InfoEffect *inf
 void refresh(Info info, int cnt){
     widget->refresh();
 }
+
+
+
+
+
+
+
+
+
 
 void draw_move(InfoMove infoMove){}
 void draw_effect(InfoEffect infoEffect){}

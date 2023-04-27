@@ -44,15 +44,26 @@ static void player_object_action(void *self){
     }
     if(storage->player_attack_key != NONE){
         if(storage->attack_interval == 0){
-            player_shoot(object, 106);
+            player_shoot(object, NULL);
             storage->attack_interval = 10;
         }
     }
     if(storage->player_use_skill_key != NONE){
-        if(storage->skill_interval == 0){
-            place_tesla(object);
-            storage->skill_interval = 100;
+        if(storage->attack_interval == 0){
+            if(object->config.side == BLUE_TROOP){
+                object->api->request_use_skill_player(object->host, PLAYER1, NULL);
+            }else{
+                object->api->request_use_skill_player(object->host, PLAYER2, NULL);
+            }
         }
+    }
+    if(storage->player_change_skill_key != NONE){
+        if(object->config.side == BLUE_TROOP){
+            object->api->change_skill_choice(object->host, PLAYER1, 1, 0);
+        }else{
+            object->api->change_skill_choice(object->host, PLAYER2, 1, 0);
+        }
+        
     }
 }
 
@@ -64,7 +75,7 @@ Object* create_player_object(int side){
         printf("Error: side must be RED_TROOP or BLUE_TROOP");
         exit(1);
     }
-    set_object_config(object, 500, side, 100, 3, 3, PLAYER_OBJECT_INTERVAL, TRUE);
+    set_object_config(object, 100, side, 500, 3, 3, PLAYER_OBJECT_INTERVAL, TRUE);
     if(side == BLUE_TROOP){
         set_object_anime(object, TRUE, 207, 205, 206, 204, 207);
     }else{

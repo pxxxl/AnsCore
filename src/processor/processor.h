@@ -25,6 +25,12 @@ typedef struct ProcessorAPIRequest ProcessorAPIRequest;
 #define API_REQUEST_STEP 10                 // step
 #define API_REQUEST_PLACE 11                // place
 #define API_REQUEST_SUISIDE 12              // suiside
+#define API_REQUEST_USE_SKILL 13            // use skill
+#define MAX_SKILL_NUM 100                   // the total number of the skills
+#define UNIT_TYPE_PLAYER_OBJECT 100         // the type of the player object
+#define PLAYER_SKILL_MAX_NUM 6              // the max number of the skills of the player
+#define PLAYER1 1                           // the id of the player 1
+#define PLAYER2 2                           // the id of the player 2
 
 
 #include "../base/base.h"
@@ -33,7 +39,7 @@ typedef struct ProcessorAPIRequest ProcessorAPIRequest;
 
 typedef struct PlayerObject{
     Object* object;
-    int skill_tag[SKILL_NUM];
+    int skill_tag[PLAYER_SKILL_MAX_NUM];
     int skill_num;
     int skill_choice;// if -1, means no skill is chosen
 }PlayerObject;
@@ -49,7 +55,7 @@ typedef struct AnimePack{
 typedef struct PlayerDisplayPack{
     int hp;
     int side;                    // RED_TROOP or BLUE_TROOP
-    int skill_tag[SKILL_NUM];    // the tag of the skill
+    int skill_tag[PLAYER_SKILL_MAX_NUM];    // the tag of the skill
     int skill_num;
     int skill_choice;            // if -1, means no skill is chosen
 } PlayerDisplayPack;
@@ -85,6 +91,8 @@ struct ProcessorAPIRequest{
     void* ext_4;
 };
 
+typedef void (*SkillFunc)(Object* self, void* param);
+
 
 struct ProcessorAPI{
     // make best effort to do the action
@@ -99,7 +107,9 @@ struct ProcessorAPI{
     void (*request_weak)(Processor *host, Object *source, Object* target, int degree);
     void (*request_heal)(Processor *host, Object *source, Object* target, int heal);
     void (*request_hurt)(Processor *host, Object *source, Object* target, int damage);
-
+    void (*request_use_skill)(Processor *host, Object *source, int skill_id, void* params);
+    void (*request_use_skill_player)(Processor *host, int player_id, void* params);
+    
     // NOTICE: USER SHOULD USE MALLOC TO ALLOCATE MEMORY FOR THE PACK, AND DON'T FREE IT
     void (*request_load_anime)(Processor *host, AnimePack *pack);
     void (*request_load_static_effect)(Processor* host, int x, int y, int tag, int delay);
@@ -107,6 +117,8 @@ struct ProcessorAPI{
     void (*request_load_dynamic_effect)(Processor* host, int x, int y, int des_x, int des_y, int tag, int delay);
     void (*request_load_move_effect)(Processor* host, int x, int y, int step, int direction, int tag, int delay);
 
+    void (*give_skill)(Processor *host, Object *source, int skill_id);
+    void (*change_skill_choice)(Processor *host, int player_id, int right_shift, int left_shift);
     // range is [x1, x2) and [y1, y2), invalid address excluded automately
     Object* (*detect_exist_object)(Processor *host, int x1, int y1, int x2, int y2);
     Object* (*get_object)(Processor *host, int x, int y);
@@ -154,6 +166,8 @@ struct Processor{
     ProcessorAPIRequest request_queue[API_REQUEST_MAX_NUM];
     int request_queue_size;
 
+    SkillFunc skill_map[MAX_SKILL_NUM];
+
     int distance_list_generated;
     Object ***distance_list;
     Object **object_list;
@@ -161,6 +175,7 @@ struct Processor{
 
     void (*step)(Processor *self);
     ProcessorAnimeData (*export_anime_data)(Processor *self);
+    void (*fillin_skill_map)(Processor *self, SkillFunc* skill_map, int length);
 };
 
 

@@ -19,6 +19,10 @@ void request_weak(Processor *host, Object *source, Object* target, int degree);
 void request_heal(Processor *host, Object *source, Object* target, int heal);
 void request_hurt(Processor *host, Object *source, Object* target, int damage);
 void request_load_anime(Processor *host, AnimePack *pack);
+void request_use_skill(Processor *host, Object *source, int skill_id, void* params);
+void request_use_skill_player(Processor *host, int player_id, void* params);
+void give_skill(Processor *host, Object *source, int skill_id);
+void change_skill_choice(Processor *host, int player_id, int right_shift, int left_shift);
 void load_static_effect(Processor* host, int x, int y, int tag, int delay);
 void load_static_sustaining_effect(Processor* host, int x, int y, int tags[], int length, int delay);
 void load_dynamic_effect(Processor* host, int x, int y, int des_x, int des_y, int tag, int delay);
@@ -36,6 +40,7 @@ static BOOL cannot_hurt(Processor *host, Object* attacker, Object* defender);
 static BOOL at_edge(Processor *host, Object* object);
 static BOOL going_out_of_bound(Processor *host, Object* object, int direction);
 void step(Processor *self);
+void fillin_skill_map(Processor *self, SkillFunc* skill_map, int length);
 PlayerDisplayPack processor_player_data_to_anime_player_data(PlayerObject* player);
 ProcessorAnimeData export_anime_data(Processor *self);
 void processAPIRequest(Processor *self, ProcessorAPIRequest *request);
@@ -56,12 +61,16 @@ static void init_processor_api(Processor* self){
     self->api->request_weak = request_weak;
     self->api->request_heal = request_heal;
     self->api->request_hurt = request_hurt;
+    self->api->request_use_skill = request_use_skill;
     self->api->request_load_anime = request_load_anime;
     self->api->request_load_static_effect = load_static_effect;
     self->api->request_load_static_sustaining_effect = load_static_sustaining_effect;
     self->api->request_load_dynamic_effect = load_dynamic_effect;
     self->api->request_load_move_effect = load_move_effect;
+    self->api->request_use_skill_player = request_use_skill_player;
 
+    self->api->give_skill = give_skill;
+    self->api->change_skill_choice = change_skill_choice;
     self->api->detect_exist_object = detect_exist_object;
     self->api->get_object = get_object;
     self->api->find_closest_object_in_direction = find_closest_object_in_direction;
@@ -82,7 +91,8 @@ static void init_processor_player(Processor* self){
     self->player[1].skill_num = 0;
     self->player[0].skill_choice = -1;
     self->player[1].skill_choice = -1;
-
+    self->api->request_place(self, NULL, self->player[0].object, 0, 3, UP);
+    self->api->request_place(self, NULL, self->player[1].object, 18, 15, DOWN);
 }
 
 
@@ -102,6 +112,7 @@ Processor* init_processor(int length, int height){
     // create the processor's method
     self->step = step;
     self->export_anime_data = export_anime_data;
+    self->fillin_skill_map = fillin_skill_map;
 
     return self;
 }
@@ -254,7 +265,7 @@ PlayerDisplayPack processor_player_data_to_anime_player_data(PlayerObject* playe
     pack.skill_num = player->skill_num;
     pack.skill_choice = player->skill_choice;
     int i = 0;
-    for(i = 0; i < SKILL_NUM; i++){
+    for(i = 0; i < PLAYER_SKILL_MAX_NUM; i++){
         pack.skill_tag[i] = player->skill_tag[i];
     }
     return pack;
@@ -432,6 +443,11 @@ void processAPIRequest(Processor *self, ProcessorAPIRequest *request){
         case API_REQUEST_SUISIDE:
             request->source->status.hp = 0;
             break;
+        case API_REQUEST_USE_SKILL:
+            self->skill_map[request->ext_1](request->source, request->ext_4);
+            if(request->ext_4 != NULL)
+                free(request->ext_4);
+            break;
         default:
             break;
     }
@@ -574,6 +590,67 @@ void request_hurt(Processor *host, Object *source, Object* target, int damage){
     request->source = source;
     request->target = target;
     request->ext_1 = damage;
+}
+
+void request_use_skill(Processor *host, Object *source, int skill_id, void* params){
+    /*
+    if(host->request_queue_size >= API_REQUEST_MAX_NUM) return;
+    ProcessorAPIRequest* request = &(host->request_queue[host->request_queue_size++]);
+    request->type = API_REQUEST_USE_SKILL;
+    request->source = source;
+    request->ext_1 = skill_id;
+    if(source == host->player[0].object){
+        request->ext_2 = PLAYER1;
+        request->ext_3 = host->player[0].skill_choice;
+    }else{
+        request->ext_2 = PLAYER2;
+        request->ext_3 = host->player[1].skill_choice;
+    }
+    request->ext_4 = params;
+    */
+}
+
+void request_use_skill_player(Processor *host, int player_id, void* params){
+    if(host->request_queue_size >= API_REQUEST_MAX_NUM) return;
+
+    PlayerObject* player;
+    if(player_id == PLAYER1) player = &host->player[0];
+    else if(player_id == PLAYER2) player = &host->player[1];
+    else return;
+    if(player->skill_choice < 0 || player->skill_choice >= player->skill_num){
+        return;
+    }
+
+    int target = player->skill_tag[player->skill_choice];
+    for(int i = player->skill_choice; i < PLAYER_SKILL_MAX_NUM - 1; i++){
+        player->skill_tag[i] = player->skill_tag[i+1];
+    }
+    player->skill_num = player->skill_num - 1;
+    if(player->skill_num == player->skill_choice){
+        player->skill_choice -= 1;
+    }
+    ProcessorAPIRequest* request = &(host->request_queue[host->request_queue_size++]);
+    request->type = API_REQUEST_USE_SKILL;
+    request->source = player->object;
+    request->ext_1 = target;
+    request->ext_4 = params;
+
+}
+
+void give_skill(Processor *host, Object *source, int skill_id){
+    if(source->config.type != UNIT_TYPE_PLAYER_OBJECT) return;
+    PlayerObject* playerA = &host->player[0];
+    PlayerObject* playerB = &host->player[1];
+    PlayerObject* Player;
+    if(playerA->object == source) Player = playerA;
+    else if(playerB->object == source) Player = playerB;
+    else return;
+
+    if(Player->skill_num >= PLAYER_SKILL_MAX_NUM) return;
+    Player->skill_tag[Player->skill_num++] = skill_id;
+    if(Player->skill_choice == -1){
+        Player->skill_choice = 0;
+    }
 }
 
 // request to load the anime
@@ -761,4 +838,32 @@ void load_move_effect(Processor* host, int x, int y, int step, int direction, in
             break;
     }
     load_dynamic_effect(host, x, y, des_x, des_y, tag, delay);
+}
+
+void fillin_skill_map(Processor *self, SkillFunc* skill_map, int length){
+    for(int i = 0; i < length; i++){
+        self->skill_map[i] = skill_map[i];
+    }
+    for(int i = length; i < MAX_SKILL_NUM; i++){
+        self->skill_map[i] = NULL;
+    }
+}
+
+void change_skill_choice(Processor *host, int player_id, int right_shift, int left_shift){
+    PlayerObject* player;
+    if(player_id == 1){
+        player = &host->player[0];
+    }
+    else{
+        player = &host->player[1];
+    }
+    if(player->skill_num == 0) return;
+    int shift = right_shift - left_shift;
+    int real_shift = shift % player->skill_num;
+    if(player->skill_choice + real_shift < player->skill_num){
+        player->skill_choice += real_shift;
+    }
+    else{
+        player->skill_choice = player->skill_choice + real_shift - player->skill_num;
+    }
 }

@@ -1,4 +1,5 @@
 #include "../custom.h"
+#include <stdlib.h>
 
 void ordinary_bullet_action(Object* self);
 void freeze_bullet_action(Object* self);
@@ -68,7 +69,7 @@ void bullet_move_and_hit_action(Object* self, void (*bullet_hit)(Object* self, O
 Object* create_ordinary_bullet_object(int side){
     Object* obs = (Object*)malloc(sizeof(Object));
     if(side != RED_BULLET && side != BLUE_BULLET){
-        printf("Error: create_ordinary_bullet_object: side is not valid");
+        //printf("Error: create_ordinary_bullet_object: side is not valid");
         exit(1);
     }
     set_object_config(obs, 106, side, 1, 1, 1, BULLET_OBJECT_INTERVAL, TRUE);
@@ -78,7 +79,7 @@ Object* create_ordinary_bullet_object(int side){
     obs->birth = default_object_birth;
     obs->action = ordinary_bullet_action;
     obs->death = default_object_death;
-    obs->hurt = default_persist_affect;
+    obs->hurt = default_object_hurt;
     obs->heal = default_persist_affect;
     obs->freeze = default_persist_affect;
     obs->burn = default_persist_affect;

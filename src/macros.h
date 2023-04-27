@@ -18,8 +18,7 @@
 #define BLUE_BULLET 4
 #define NEUTRAL 5
 
-#define PLAYER_HP 500
-#define SKILL_NUM 6
+
 
 #define BASE_MAX_X 40                       // x range [0, BASE_MAX_X)
 #define BASE_MAX_Y 22                       // y range [0, BASE_MAX_Y)
@@ -40,6 +39,6 @@
 #define BLOCK_PIXEL_X 16
 #define BLOCK_PIXEL_Y 16
 
-
+#define ABS(x) ((x) > 0 ? (x) : -(x))
 
 

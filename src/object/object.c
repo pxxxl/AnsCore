@@ -1,23 +1,23 @@
 #include "object.h"
 
-void default_object_birth(void *self){
+void default_object_birth(Object *self){
     // do nothing
 }
 
-void default_object_action(void *self){
+void default_object_action(Object *self){
     // do nothing
 }
 
-void default_object_death(void *self){
+void default_object_death(Object *self){
     // do nothing
 }
 
-void default_object_hurt(void *self, int damage){
+void default_object_hurt(Object *self, int damage){
     Object* object = (Object*)self;
     object->status.hp -= damage;
 }
 
-void default_object_heal(void *self, int heal){
+void default_object_heal(Object *self, int heal){
     Object* object = (Object*)self;
     if(object->status.hp + heal > object->config.max_hp)
         object->status.hp = object->config.max_hp;
@@ -25,22 +25,22 @@ void default_object_heal(void *self, int heal){
         object->status.hp += heal;
 }
 
-void default_object_freeze(void *self, int degree){
+void default_object_freeze(Object *self, int degree){
     Object* object = (Object*)self;
     object->status.frozen_degree = degree;
 }
 
-void default_object_burn(void *self, int degree){
+void default_object_burn(Object *self, int degree){
     Object* object = (Object*)self;
     object->status.burning_degree = degree;
 }
 
-void default_object_defend(void *self, int degree){
+void default_object_defend(Object *self, int degree){
     Object* object = (Object*)self;
     object->status.defending_degree = degree;
 }
 
-void default_object_weak(void *self, int degree){
+void default_object_weak(Object *self, int degree){
     Object* object = (Object*)self;
     object->status.weak_degree = degree;
 }
@@ -85,6 +85,6 @@ void set_object_anime(Object* object, BOOL direction_4, int up_ori_image, int le
 }
 
 // do nothing
-void default_persist_affect(void *self, int affect){
+void default_persist_affect(Object *self, int affect){
     // do nothing
 }
