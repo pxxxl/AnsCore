@@ -139,6 +139,7 @@ void MyWidget::keyPressEvent(QKeyEvent *event)
     
 }
 
+
 void MyWidget::keyReleaseEvent(QKeyEvent *event)
 {
     if(event->key() == Qt::Key_W || event->key() == Qt::Key_S || event->key() == Qt::Key_A || event->key() == Qt::Key_D){

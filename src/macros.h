@@ -12,11 +12,9 @@
 
 #define LOOKUP_MAX_RADIUS 200
 
-#define RED_TROOP 1
-#define BLUE_TROOP 2
-#define RED_BULLET 3
-#define BLUE_BULLET 4
-#define NEUTRAL 5
+
+
+
 
 
 

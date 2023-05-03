@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+extern ini TeslaTowerIni;
+extern ini LavaTowerIni;
+
 typedef struct TeslaStorage{
     int birth_silent;
 }TeslaStorage;
@@ -28,7 +31,7 @@ void tesla_tower_action(Object* self){
     int self_side = self->config.side;
     for(j = 1; j < length; j++){
         int other_side = self_distance_list[j]->config.side;
-        if(other_side != self_side && (other_side == RED_TROOP || other_side == BLUE_TROOP)){
+        if(other_side != self_side && (other_side == INFANTRY || other_side == TANK)){
             break;
         }
     }
@@ -56,29 +59,13 @@ void tesla_tower_action(Object* self){
 }
 
 Object* create_tesla_tower_object(int side){
-    Object* obs = (Object*)malloc(sizeof(Object));
+    Object* obs = init_object(TeslaTowerIni, side);
     TeslaStorage* storage = (TeslaStorage*)malloc(sizeof(TeslaStorage));
-    storage->birth_silent = 10;
-    if(side != RED_TROOP && side != BLUE_TROOP){
-        //printf("Error: create_tesla_tower_object: side is not valid");
-        exit(1);
-    }
-    set_object_config(obs, 108, side, 300, 3, 3, TESLA_TOWER_INTERVAL, TRUE);
-    set_object_status(obs, 300);
-    set_object_anime(obs, TRUE, 106, 106, 106, 106, 106);
     obs->storage = storage;
-    obs->birth = default_object_birth;
+    storage->birth_silent = 10;
     obs->action = tesla_tower_action;
-    obs->death = default_object_death;
-    obs->hurt = default_object_hurt;
-    obs->heal = default_object_heal;
-    obs->freeze = default_object_freeze;
-    obs->burn = default_object_burn;
-    obs->defend = default_object_defend;
-    obs->weak = default_object_weak;
     return obs;
 }
-
 
 
 void lava_tower_action(Object* self){
@@ -97,11 +84,9 @@ void lava_tower_action(Object* self){
     Object* closest_object;
     int self_side = self->config.side;
     for(j = 1; j < length; j++){
+        int other_family = self_distance_list[j]->config.family;
         int other_side = self_distance_list[j]->config.side;
-        if(self_side == RED_TROOP && other_side == BLUE_BULLET){
-            break;
-        }
-        if(self_side == BLUE_TROOP && other_side == RED_BULLET){
+        if(self_side != other_side && other_family == BULLET){
             break;
         }
     }
@@ -129,23 +114,7 @@ void lava_tower_action(Object* self){
 }
 
 Object* create_lava_tower_object(int side){
-    Object* obs = (Object*)malloc(sizeof(Object));
-    if(side != RED_TROOP && side != BLUE_TROOP){
-        printf("Error: create_lava_tower_object: side is not valid");
-        exit(1);
-    }
-    set_object_config(obs, 108, side, 300, 3, 3, TESLA_TOWER_INTERVAL, TRUE);
-    set_object_status(obs, 300);
-    set_object_anime(obs, TRUE, 108, 108, 108, 108, 108);
-    obs->storage = NULL;
-    obs->birth = default_object_birth;
+    Object* obs = init_object(TeslaTowerIni, side);
     obs->action = lava_tower_action;
-    obs->death = default_object_death;
-    obs->hurt = default_object_hurt;
-    obs->heal = default_object_heal;
-    obs->freeze = default_object_freeze;
-    obs->burn = default_object_burn;
-    obs->defend = default_object_defend;
-    obs->weak = default_object_weak;
     return obs;
 }

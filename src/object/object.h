@@ -3,6 +3,17 @@
 struct Object;
 typedef struct Object Object;
 
+#define RED 1
+#define BLUE 2
+#define NEUTRAL 3
+
+#define INFANTRY 1
+#define BULLET 2
+#define TOWER 3
+#define TANK 4
+#define MAGIC 5
+#define OBSTACLE 6
+
 #include "../processor/processor.h"
 #include "../macros.h"
 #include "../base/base.h"
@@ -30,6 +41,7 @@ struct Config{
     int length;
     int height;
     int type;
+    int family;
     int side;
     int interval;
     BOOL auto_load_anime;
@@ -84,7 +96,7 @@ typedef struct default_storage{
 void set_object_default_storage(Object* object, int speed, int damage, int range, int attack_interval);
 
 // set the object's config
-void set_object_config(Object* object, int type, int side, int max_hp, int length, int height, int interval, BOOL auto_load_anime);
+void set_object_config(Object* object, int type, int side, int max_hp, int length, int height, int interval, BOOL auto_load_anime, int family);
 
 // hp = hp, degrees = 0
 void set_object_status(Object* object, int hp);

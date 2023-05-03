@@ -12,7 +12,7 @@ void player_shoot(Object* self, void* param){
         case LEFT: actual_x-=2; actual_y++; break;
         case RIGHT: actual_x+=4; actual_y++; break;
     }
-    int side = self->config.side == RED_TROOP ? RED_BULLET : BLUE_BULLET;
+    int side = self->config.side == RED ? RED : BLUE;
     Object* bullet = NULL;
     bullet = create_ordinary_bullet_object(side);
     self->api->request_place(self->host, self, bullet, actual_x, actual_y, ori);

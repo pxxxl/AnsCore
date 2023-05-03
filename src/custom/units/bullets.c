@@ -1,6 +1,11 @@
 #include "../custom.h"
 #include <stdlib.h>
 
+extern ini BulletOrdinaryIni;
+extern ini BulletFreezeIni;
+extern ini BulletBurningIni;
+extern ini BulletWeakingIni;
+
 void ordinary_bullet_action(Object* self);
 void freeze_bullet_action(Object* self);
 void burning_bullet_action(Object* self);
@@ -16,15 +21,13 @@ static void freeze_bullet_hit(Object* self, Object* target, int degree){
 }
 
 static void burning_bullet_hit(Object* self, Object* target, int degree){
-    self->api->request_burn(self->host, self, target, degree);
-}
-
-static void defending_bullet_hit(Object* self, Object* target, int degree){
-    self->api->request_defend(self->host, self, target, degree);
+    //self->api->request_burn(self->host, self, target, degree);
+    self->api->request_hurt(self->host, self, target, 100);
 }
 
 static void weaking_bullet_hit(Object* self, Object* target, int degree){
-    self->api->request_weak(self->host, self, target, degree);
+    //self->api->request_weak(self->host, self, target, degree);
+    self->api->request_hurt(self->host, self, target, 100);
 }
 
 // state: move or hit or edge suiside
@@ -67,112 +70,26 @@ void bullet_move_and_hit_action(Object* self, void (*bullet_hit)(Object* self, O
 
 
 Object* create_ordinary_bullet_object(int side){
-    Object* obs = (Object*)malloc(sizeof(Object));
-    if(side != RED_BULLET && side != BLUE_BULLET){
-        //printf("Error: create_ordinary_bullet_object: side is not valid");
-        exit(1);
-    }
-    set_object_config(obs, 106, side, 1, 1, 1, BULLET_OBJECT_INTERVAL, TRUE);
-    set_object_status(obs, 1);
-    set_object_anime(obs, TRUE, 401, 401, 401, 401, 401);
-    obs->storage = NULL;
-    obs->birth = default_object_birth;
+    Object* obs = init_object(BulletOrdinaryIni, side);
     obs->action = ordinary_bullet_action;
-    obs->death = default_object_death;
-    obs->hurt = default_object_hurt;
-    obs->heal = default_persist_affect;
-    obs->freeze = default_persist_affect;
-    obs->burn = default_persist_affect;
-    obs->defend = default_persist_affect;
-    obs->weak = default_persist_affect;
     return obs;
 }
 
 Object* create_freeze_bullet_object(int side){
-    Object* obs = (Object*)malloc(sizeof(Object));
-    if(side != RED_BULLET && side != BLUE_BULLET){
-        printf("Error: create_ordinary_bullet_object: side is not valid");
-        exit(1);
-    }
-    set_object_config(obs, 106, side, 1, 1, 1, BULLET_OBJECT_INTERVAL, TRUE);
-    set_object_status(obs, 1);
-    set_object_anime(obs, TRUE, 401, 401, 401, 401, 401);
-    obs->storage = NULL;
-    obs->birth = default_object_birth;
+    Object* obs = init_object(BulletFreezeIni, side);
     obs->action = freeze_bullet_action;
-    obs->death = default_object_death;
-    obs->hurt = default_persist_affect;
-    obs->heal = default_persist_affect;
-    obs->freeze = default_persist_affect;
-    obs->burn = default_persist_affect;
-    obs->defend = default_persist_affect;
-    obs->weak = default_persist_affect;
     return obs;
 }
 
 Object* create_burning_bullet_object(int side){
-    Object* obs = (Object*)malloc(sizeof(Object));
-    if(side != RED_BULLET && side != BLUE_BULLET){
-        printf("Error: create_ordinary_bullet_object: side is not valid");
-        exit(1);
-    }
-    set_object_config(obs, 106, side, 1, 1, 1, BULLET_OBJECT_INTERVAL, TRUE);
-    set_object_status(obs, 1);
-    set_object_anime(obs, TRUE, 401, 401, 401, 401, 401);
-    obs->storage = NULL;
-    obs->birth = default_object_birth;
+    Object* obs = init_object(BulletBurningIni, side);
     obs->action = burning_bullet_action;
-    obs->death = default_object_death;
-    obs->hurt = default_persist_affect;
-    obs->heal = default_persist_affect;
-    obs->freeze = default_persist_affect;
-    obs->burn = default_persist_affect;
-    obs->defend = default_persist_affect;
-    obs->weak = default_persist_affect;
-    return obs;
-}
-
-Object* create_defending_bullet_object(int side){
-    Object* obs = (Object*)malloc(sizeof(Object));
-    if(side != RED_BULLET && side != BLUE_BULLET){
-        printf("Error: create_ordinary_bullet_object: side is not valid");
-        exit(1);
-    }
-    set_object_config(obs, 106, side, 1, 1, 1, BULLET_OBJECT_INTERVAL, TRUE);
-    set_object_status(obs, 1);
-    set_object_anime(obs, TRUE, 401, 401, 401, 401, 401);
-    obs->storage = NULL;
-    obs->birth = default_object_birth;
-    obs->action = defending_bullet_action;
-    obs->death = default_object_death;
-    obs->hurt = default_persist_affect;
-    obs->heal = default_persist_affect;
-    obs->freeze = default_persist_affect;
-    obs->burn = default_persist_affect;
-    obs->defend = default_persist_affect;
-    obs->weak = default_persist_affect;
     return obs;
 }
 
 Object* create_weaking_bullet_object(int side){
-    Object* obs = (Object*)malloc(sizeof(Object));
-    if(side != RED_BULLET && side != BLUE_BULLET){
-        printf("Error: create_ordinary_bullet_object: side is not valid");
-        exit(1);
-    }
-    set_object_config(obs, 106, side, 1, 1, 1, BULLET_OBJECT_INTERVAL, TRUE);
-    set_object_status(obs, 1);
-    set_object_anime(obs, TRUE, 401, 401, 401, 401, 401);
-    obs->storage = NULL;
-    obs->birth = default_object_birth;
+    Object* obs = init_object(BulletWeakingIni, side);
     obs->action = weaking_bullet_action;
-    obs->death = default_object_death;
-    obs->hurt = default_persist_affect;
-    obs->heal = default_persist_affect;
-    obs->freeze = default_persist_affect;
-    obs->burn = default_persist_affect;
-    obs->defend = default_persist_affect;
-    obs->weak = default_persist_affect;
     return obs;
 }
 
@@ -192,12 +109,6 @@ void burning_bullet_action(Object* self){
     int anime_tag = 401;
     int boom_tags[10] = {301, 302, 303, 304, 305, 306, 307, 308, 309, 310};
     bullet_move_and_hit_action(self, burning_bullet_hit, BURNING_BULLET_DAMAGE, anime_tag, boom_tags, 10);
-}
-
-void defending_bullet_action(Object* self){
-    int anime_tag = 401;
-    int boom_tags[10] = {301, 302, 303, 304, 305, 306, 307, 308, 309, 310};
-    bullet_move_and_hit_action(self, defending_bullet_hit, 0, anime_tag, boom_tags, 10);
 }
 
 void weaking_bullet_action(Object* self){

@@ -1,5 +1,6 @@
 #include <QApplication>
 #include <QtWidgets>
+#include "fmt/core.h"
 
 extern "C"{
     #include "../src/processor/processor.h"
@@ -16,14 +17,12 @@ int main(int argc, char* argv[])
 {
     QApplication app(argc, argv);
     app.setKeyboardInputInterval(10);
-
     widget = new TWidget;
     widget->show();
-
     auto pro = init_processor(BASE_MAX_X, BASE_MAX_Y);
-    
-    auto player1 = create_player_object(BLUE_TROOP);
-    auto player2 = create_player_object(RED_TROOP);
+
+    auto player1 = create_player_object(BLUE);
+    auto player2 = create_player_object(RED);
     /*
     auto wall1 = create_obstacle_object(101);
     auto wall2 = create_obstacle_object(101);
@@ -77,12 +76,18 @@ int main(int argc, char* argv[])
         static int cnter = 0;
         static int cnt = 0;
         static int box_cnt = 0;
+        static int box_cnt_2 = 100;
         if(cnt == 0){
             //pro->api->request_load_static_sustaining_effect(pro, cnter++%BASE_MAX_X, 0, tags, 8, 0);
             if(box_cnt == 0){
                 unsigned randx = randint() % 38;
                 unsigned randy = randint() % 21;
                 place_skill_box(pro, randx, randy);
+            }
+            if(box_cnt_2 == 0){
+                unsigned randx = randint() % 38;
+                unsigned randy = randint() % 21;
+                place_bullet_box(pro, randx, randy);
             }
             widget->key_step();
             pro->step(pro);
@@ -103,17 +108,23 @@ int main(int argc, char* argv[])
             import_info(info, infoMove, lengthMove, infoEffect, lengthEffect);
             renew_status(players);
             refresh(*info, cnt);
+            box_cnt++;
+            box_cnt_2++;
+
+            if(box_cnt == 500){
+                box_cnt = 0;
+            }
+            if(box_cnt_2 == 200){
+                box_cnt_2 = 0;
+            }
         }else{
             refresh(*info, cnt);
         }
         cnt++;
-        box_cnt++;
         if(cnt == 8){
             cnt = 0;
         }
-        if(box_cnt == 1000){
-            box_cnt = 0;
-        }
+
     });
     timer->start(10);
     return app.exec();

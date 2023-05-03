@@ -85,8 +85,8 @@ static void init_processor_api(Processor* self){
 }
 
 static void init_processor_player(Processor* self){
-    self->player[0].object = create_player_object(BLUE_TROOP);
-    self->player[1].object = create_player_object(RED_TROOP);
+    self->player[0].object = create_player_object(BLUE);
+    self->player[1].object = create_player_object(RED);
     self->player[0].skill_num = 0;
     self->player[1].skill_num = 0;
     self->player[0].skill_choice = -1;
@@ -208,9 +208,6 @@ void step(Processor *self){
         if(object->status.burning_degree > 0){
             object->status.burning_degree--;
         }
-        if(object->status.defending_degree > 0){
-            object->status.defending_degree--;
-        }
         if(object->status.weak_degree > 0){
             object->status.weak_degree--;
         }
@@ -225,11 +222,17 @@ void step(Processor *self){
         // draw the unmoved && autoload_anime objects
         Object* object = (Object*)blocks[i]->any;
         if(object->status.moving == FALSE && object->config.auto_load_anime == TRUE){
+            int image_tag;
+            if(object->anime.direction_4){
+                image_tag = object->anime.ori_image[object->block->orientation];
+            }else{
+                image_tag = object->anime.ori_image[NONE];
+            }
             self->api->request_load_static_effect(
                 self,
                 object->block->x,
                 object->block->y,
-                object->anime.ori_image[object->block->orientation],
+                image_tag,
                 0
             );
         }
@@ -419,6 +422,12 @@ void processAPIRequest(Processor *self, ProcessorAPIRequest *request){
             int legacy_x = request->source->block->x;
             int legacy_y = request->source->block->y;
             success = self->base->move_block(self->base, request->source->block, request->ext_1, 1);
+            int image_tag;
+            if(request->source->anime.direction_4){
+                image_tag = request->source->anime.ori_image[request->source->block->orientation];
+            }else{
+                image_tag = request->source->anime.ori_image[NONE];
+            }
             if(success && request->source->config.auto_load_anime){
                 self->api->request_load_move_effect(
                     self,
@@ -426,7 +435,7 @@ void processAPIRequest(Processor *self, ProcessorAPIRequest *request){
                     legacy_y,
                     1,
                     request->ext_1,
-                    request->source->anime.ori_image[request->source->block->orientation],
+                    image_tag,
                     0
                 );
             }
@@ -638,7 +647,7 @@ void request_use_skill_player(Processor *host, int player_id, void* params){
 }
 
 void give_skill(Processor *host, Object *source, int skill_id){
-    if(source->config.type != UNIT_TYPE_PLAYER_OBJECT) return;
+    if(source->config.type != UNIT_TYPE_PLAYER_OBJECT_A && source->config.type != UNIT_TYPE_PLAYER_OBJECT_B) return;
     PlayerObject* playerA = &host->player[0];
     PlayerObject* playerB = &host->player[1];
     PlayerObject* Player;
@@ -744,20 +753,7 @@ static BOOL is_valid_address(Processor* host, int x, int y){
 static BOOL cannot_hurt(Processor *host, Object* attacker, Object* defender){
     int attacker_side = attacker->config.side;
     int defender_side = defender->config.side;
-    switch(attacker_side){
-        case RED_TROOP:
-            if(defender_side == RED_TROOP || defender_side == RED_BULLET) return TRUE;
-            break;
-        case BLUE_TROOP:
-            if(defender_side == BLUE_TROOP || defender_side == BLUE_BULLET) return TRUE;
-            break;
-        case RED_BULLET:
-            if(defender_side == RED_TROOP || defender_side == RED_BULLET) return TRUE;
-            break;
-        case BLUE_BULLET:
-            if(defender_side == BLUE_TROOP || defender_side == BLUE_BULLET) return TRUE;
-            break;
-    }
+    if(attacker_side == defender_side) return TRUE;
     return FALSE;
 }
 
@@ -806,13 +802,13 @@ void load_dynamic_effect(Processor* host, int x, int y, int des_x, int des_y, in
 }
 
 void clear_player_dash(PlayerDash *player_dash, int side){
-    if (side == RED_TROOP){
+    if (side == RED){
         player_dash->player_2_attack_key = FALSE;
         player_dash->player_2_direction_key = NONE;
         player_dash->player_2_change_skill_key = FALSE;
         player_dash->player_2_use_skill_key = FALSE;
     }
-    if (side == BLUE_TROOP){
+    if (side == BLUE){
         player_dash->player_1_attack_key = FALSE;
         player_dash->player_1_direction_key = NONE;
         player_dash->player_1_change_skill_key = FALSE;

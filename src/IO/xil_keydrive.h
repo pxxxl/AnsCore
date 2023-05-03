@@ -8,6 +8,12 @@
 #include "../player_dash.h"
 
 u8 scancode[256];
+u8 key_queue_A[1000];
+u8 key_queue_B[1000];
+u8 key_pressing_A = 0;
+u8 key_pressing_B = 0;
+int key_queue_A_length = 0;
+int key_queue_B_length = 0;
 void scancode_ascii();
 void key_interrupt();
 int write_index = 0;
@@ -71,47 +77,86 @@ u8 char_to_key[256][2] = {
 {'m', 0x3a}
 };
 
-void key_interrupt(){
-    scancode[write_index] = (u8)(Xil_In32(XPAR_PS2_0_S00_AXI_BASEADDR) & 0xff);
+char read_char_from_terminal(){
+    static last_inp = 0;
+    char inp;
+    while(1){
+        inp = XUartLite_RecvByte(XPAR_UARTLITE_0_BASEADDR);
+        if(inp == last_inp){
+            continue;
+        }
+    	if(inp != 13){
+    		break;
+    	}
+        last_inp = inp;
+    }
+    return inp;
+}
+
+void uart_interrupt(){
+    scancode[write_index] = (u8)read_char_from_terminal();
     write_index++;
     if(write_index == 256){
         write_index = 0;
     }
-    Xil_Out32(
-        XPAR_INTC_0_BASEADDR + XIN_IAR_OFFSET,
-        Xil_In32(XPAR_INTC_0_BASEADDR + XIN_ISR_OFFSET)
-    );
 }
 
 char read_char(int read_index, char* release){
-    if(scancode[read_index] == 0xf0){
-        *release = 1;
-        return 0;
-    }
-    if(*release == 1){
-        *release = 0;
-        return 0;
-    }
-    // now we have a key press
-    char cha = key_to_char[scancode[read_index]][1];
+    char cha = read_char_from_terminal();
     switch(cha){
         case 'q':player_dash.player_1_use_skill_key = TRUE; break;
-        case 'w':player_dash.player_1_direction_key = UP; break;
+        case 'w':player_dash.player_1_direction_key = UP; key_pressing_A = UP; break;
         case 'e':player_dash.player_1_change_skill_key = LEFT; break;
         case 'r':player_dash.player_1_attack_key = TRUE; break;
         case 't':player_dash.player_1_change_skill_key = RIGHT; break;
-        case 's':player_dash.player_1_direction_key = DOWN; break;
-        case 'a':player_dash.player_1_direction_key = LEFT; break;
-        case 'd':player_dash.player_1_direction_key = RIGHT; break;
+        case 's':player_dash.player_1_direction_key = DOWN; key_pressing_A = DOWN; break;
+        case 'a':player_dash.player_1_direction_key = LEFT; key_pressing_A = LEFT; break;
+        case 'd':player_dash.player_1_direction_key = RIGHT; key_pressing_A = RIGHT; break;
 
         case 'y':player_dash.player_2_use_skill_key = TRUE; break;
-        case 'u':player_dash.player_2_direction_key = UP; break;
+        case 'u':player_dash.player_2_direction_key = UP; key_pressing_B = UP; break;
         case 'i':player_dash.player_2_change_skill_key = LEFT; break;
         case 'o':player_dash.player_2_attack_key = TRUE; break;
         case 'p':player_dash.player_2_change_skill_key = RIGHT; break;
-        case 'j':player_dash.player_2_direction_key = DOWN; break;
-        case 'h':player_dash.player_2_direction_key = LEFT; break;
-        case 'k':player_dash.player_2_direction_key = RIGHT; break;
+        case 'j':player_dash.player_2_direction_key = DOWN; key_pressing_B = DOWN; break;
+        case 'h':player_dash.player_2_direction_key = LEFT; key_pressing_B = LEFT; break;
+        case 'k':player_dash.player_2_direction_key = RIGHT; key_pressing_B = RIGHT; break;
+
+        case 'W': key_pressing_A = NONE; break;
+        case 'S': key_pressing_A = NONE; break;
+        case 'A': key_pressing_A = NONE; break;
+        case 'D': key_pressing_A = NONE; break;
+        case 'U': key_pressing_B = NONE; break;
+        case 'J': key_pressing_B = NONE; break;
+        case 'H': key_pressing_B = NONE; break;
+        case 'K': key_pressing_B = NONE; break;
+    }
+}
+
+void key_step(){
+    if(key_pressing_A == UP){
+        player_dash.player_1_direction_key = UP;
+    }
+    else if(key_pressing_A == DOWN){
+        player_dash.player_1_direction_key = DOWN;
+    }
+    else if(key_pressing_A == LEFT){
+        player_dash.player_1_direction_key = LEFT;
+    }
+    else if(key_pressing_A == RIGHT){
+        player_dash.player_1_direction_key = RIGHT;
+    }
+    if(key_pressing_B == UP){
+        player_dash.player_2_direction_key = UP;
+    }
+    else if(key_pressing_B == DOWN){
+        player_dash.player_2_direction_key = DOWN;
+    }
+    else if(key_pressing_B == LEFT){
+        player_dash.player_2_direction_key = LEFT;
+    }
+    else if(key_pressing_B == RIGHT){
+        player_dash.player_2_direction_key = RIGHT;
     }
 }
 

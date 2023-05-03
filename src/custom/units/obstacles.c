@@ -3,7 +3,7 @@
 // Obstacle_wall
 Object* create_obstacle_object(int type_id){
     Object* obs = (Object*)malloc(sizeof(Object));
-    set_object_config(obs, 101, NEUTRAL, 65535, 3, 3, 5, TRUE);
+    set_object_config(obs, 101, NEUTRAL, 65535, 3, 3, 5, TRUE, OBSTACLE);
     set_object_status(obs, 65535);
     int imageid = 0;
     switch(type_id){

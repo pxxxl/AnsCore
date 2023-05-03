@@ -12,7 +12,7 @@ void place_lava_tower(Object* self, void* param){
         case LEFT: actual_x-=4; break;
         case RIGHT: actual_x+=4; break;
     }
-    int side = self->config.side == RED_TROOP ? RED_TROOP : BLUE_TROOP;
+    int side = self->config.side == RED ? RED : BLUE;
     Object* lava = create_lava_tower_object(side);
     self->api->request_place(self->host, self, lava, actual_x, actual_y, ori);
 }

@@ -65,7 +65,7 @@ void set_object_default_storage(Object* object, int speed, int damage, int range
 }
 
 // set the object's config
-void set_object_config(Object* object, int type, int side, int max_hp, int length, int height, int interval, BOOL auto_load_anime){
+void set_object_config(Object* object, int type, int side, int max_hp, int length, int height, int interval, BOOL auto_load_anime, int family){
     object->config.type = type;
     object->config.side = side;
     object->config.max_hp = max_hp;
@@ -73,6 +73,7 @@ void set_object_config(Object* object, int type, int side, int max_hp, int lengt
     object->config.height = height;
     object->config.interval = interval;
     object->config.auto_load_anime = auto_load_anime;
+    object->config.family = family;
 }
 
 void set_object_anime(Object* object, BOOL direction_4, int up_ori_image, int left_ori_image, int right_ori_image, int down_ori_image, int no_ori_image){

@@ -1,10 +1,16 @@
-100 player object(Blue 是 side1， Red 是 side2)
+100 player objectA Blue
 101 obstacle wall
 102 obstacle grey wall
 103 obstacle tree
 104 obstacle stone
-106 ordinary bullet
+// 106 ordinary bullet
 107 test object
+115 player object B
 
 108 tesla tower
 109 skill box
+110 lava tower
+111 ordinary bullet
+112 freeze bullet
+113 fire bullet
+114 weak bullet

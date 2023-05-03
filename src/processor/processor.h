@@ -27,7 +27,8 @@ typedef struct ProcessorAPIRequest ProcessorAPIRequest;
 #define API_REQUEST_SUISIDE 12              // suiside
 #define API_REQUEST_USE_SKILL 13            // use skill
 #define MAX_SKILL_NUM 100                   // the total number of the skills
-#define UNIT_TYPE_PLAYER_OBJECT 100         // the type of the player object
+#define UNIT_TYPE_PLAYER_OBJECT_A 100         // the type of the player object
+#define UNIT_TYPE_PLAYER_OBJECT_B 115         // the type of the player object
 #define PLAYER_SKILL_MAX_NUM 6              // the max number of the skills of the player
 #define PLAYER1 1                           // the id of the player 1
 #define PLAYER2 2                           // the id of the player 2

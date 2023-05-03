@@ -1,5 +1,6 @@
 add_rules("mode.debug", "mode.release")
 add_requires("gtest")
+add_requires("fmt")
 
 target("base_test")
     set_kind("binary")
@@ -39,3 +40,4 @@ target("player_test")
     add_files("src/IO/qt_draw.cpp")
     add_files("src/IO/qt_draw.h")
     add_files("src/IO/random.cpp")
+    add_packages("fmt")
