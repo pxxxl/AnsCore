@@ -204,12 +204,25 @@ void step(Processor *self){
         Object* object = (Object*)blocks[i]->any;
         if(object->status.frozen_degree > 0 && object->status.clock == object->config.interval){
             object->status.frozen_degree--;
+            if(object->block->height == 3 && object->block->length == 3){
+                self->api->request_load_static_effect(
+                    self,
+                    object->block->x,
+                    object->block->y,
+                    311,
+                    0
+                );
+            }
+
         }
         if(object->status.burning_degree > 0){
             object->status.burning_degree--;
         }
         if(object->status.weak_degree > 0){
             object->status.weak_degree--;
+        }
+        if(object->status.defending_degree > 0){
+
         }
     }
 
@@ -392,7 +405,7 @@ void processAPIRequest(Processor *self, ProcessorAPIRequest *request){
             request->target->burn(request->target, request->ext_1);
             break;
         case API_REQUEST_DEFEND:
-            request->target->defend(request->target, request->ext_1);
+            request->target->status.defending_degree = request->ext_1;
             break;
         case API_REQUEST_WEAK:
             request->target->weak(request->target, request->ext_1);
@@ -403,7 +416,8 @@ void processAPIRequest(Processor *self, ProcessorAPIRequest *request){
         case API_REQUEST_HURT:
             int hurt = request->ext_1;
             if(request->target->status.defending_degree > 0){
-                hurt -= request->target->status.defending_degree;
+                hurt = 0;
+                request->target->status.defending_degree--;
             }
             if(request->source->status.weak_degree > 0){
                 hurt -= request->source->status.weak_degree;
@@ -563,6 +577,13 @@ void request_burn(Processor *host, Object *source, Object* target, int degree){
 // defend: hurt will be reduced by degree
 void request_defend(Processor *host, Object *source, Object* target, int degree){
     if(host->request_queue_size >= API_REQUEST_MAX_NUM) return;
+    host->api->request_load_static_effect(
+        host,
+        target->block->x,
+        target->block->y,
+        312,
+        0
+    );
     ProcessorAPIRequest* request = &(host->request_queue[host->request_queue_size++]);
     request->type = API_REQUEST_DEFEND;
     request->source = source;
@@ -685,7 +706,12 @@ Object* detect_exist_object(Processor *host, int x1, int y1, int x2, int y2){
 // get the object at this place
 // return the object if there is, return NULL if not
 Object* get_object(Processor *host, int x, int y){
-    return host->base->get_block(host->base, x, y)->any;
+    Block* target = host->base->get_block(host->base, x, y);
+    if(target == NULL){
+        return NULL;
+    }else{
+        return target->any;
+    }
 }
 
 // find the closest object in the direction

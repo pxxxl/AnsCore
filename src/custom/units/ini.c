@@ -218,6 +218,154 @@ ini SkillPackIni = {
     .image_none_ori_id = 402,
 };
 
+ini CannonIni = {
+    .auto_load_anime = TRUE,
+    .four_direction_image = TRUE,
+    .default_object = TRUE,
+    .persist_object = FALSE,
+
+    .type_id = 115,
+    .type = TOWER,
+    .max_hp = 200,
+    .length = 3,
+    .height = 3,
+    .interval = 10,
+    .image_none_ori_id = 211,
+    .image_up_id = 113,
+    .image_down_id = 114,
+    .image_left_id = 114,
+    .image_right_id = 113,
+};
+
+ini BoomerTankIni = {
+    .auto_load_anime = TRUE,
+    .four_direction_image = TRUE,
+    .default_object = TRUE,
+    .persist_object = FALSE,
+
+    .type_id = 120,
+    .type = TANK,
+    .max_hp = 100,
+    .length = 3,
+    .height = 3,
+    .interval = 1,
+    .image_none_ori_id = 118,
+    .image_up_id = 118,
+    .image_down_id = 119,
+    .image_left_id = 119,
+    .image_right_id = 118,
+};
+
+ini LaserTankIni = {
+    .auto_load_anime = TRUE,
+    .four_direction_image = TRUE,
+    .default_object = TRUE,
+    .persist_object = FALSE,
+
+    .type_id = 123,
+    .type = TANK,
+    .max_hp = 300,
+    .length = 3,
+    .height = 3,
+    .interval = 8,
+    .image_none_ori_id = 120,
+    .image_up_id = 120,
+    .image_down_id = 121,
+    .image_left_id = 121,
+    .image_right_id = 120,
+};
+
+ini IceTowerIni = {
+    .auto_load_anime = TRUE,
+    .four_direction_image = FALSE,
+    .default_object = TRUE,
+    .persist_object = FALSE,
+
+    .type_id = 116,
+    .type = TOWER,
+    .max_hp = 300,
+    .length = 3,
+    .height = 3,
+    .interval = 20,
+    .image_none_ori_id = 129
+};
+
+ini ChronoInfantryIni = {
+    .auto_load_anime = TRUE,
+    .four_direction_image = TRUE,
+    .default_object = TRUE,
+    .persist_object = FALSE,
+
+    .type_id = 117,
+    .type = INFANTRY,
+    .max_hp = 200,
+    .length = 1,
+    .height = 1,
+    .interval = 2,
+    .image_none_ori_id = 128,
+    .image_up_id = 128,
+    .image_down_id = 128,
+    .image_left_id = 114,
+    .image_right_id = 128
+};
+
+ini NormalInfantryIni = {
+    .auto_load_anime = TRUE,
+    .four_direction_image = TRUE,
+    .default_object = TRUE,
+    .persist_object = FALSE,
+
+    .type_id = 118,
+    .type = INFANTRY,
+    .max_hp = 200,
+    .length = 1,
+    .height = 1,
+    .interval = 2,
+    .image_none_ori_id = 116,
+    .image_up_id = 116,
+    .image_down_id = 117,
+    .image_left_id = 117,
+    .image_right_id = 116
+};
+
+ini IceWizardIni = {
+    .auto_load_anime = TRUE,
+    .four_direction_image = TRUE,
+    .default_object = TRUE,
+    .persist_object = FALSE,
+
+    .type_id = 121,
+    .type = INFANTRY,
+    .max_hp = 200,
+    .length = 1,
+    .height = 1,
+    .interval = 2,
+    .image_none_ori_id = 124,
+    .image_up_id = 125,
+    .image_down_id = 124,
+    .image_left_id = 125,
+    .image_right_id = 124
+};
+
+ini LaserInfantryIni = {
+    .auto_load_anime = TRUE,
+    .four_direction_image = TRUE,
+    .default_object = TRUE,
+    .persist_object = FALSE,
+
+    .type_id = 122,
+    .type = INFANTRY,
+    .max_hp = 200,
+    .length = 1,
+    .height = 1,
+    .interval = 4,
+    .image_none_ori_id = 123,
+    .image_up_id = 123,
+    .image_down_id = 122,
+    .image_left_id = 123,
+    .image_right_id = 122
+};
+
 
 Object* init_object(ini init, int side){
     Object* obj = (Object*)malloc(sizeof(Object));

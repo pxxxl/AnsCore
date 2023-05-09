@@ -7,18 +7,7 @@
 #define SKILL_BOX_INTERVAL 0
 #define TESLA_TOWER_INTERVAL 10
 
-
 // Statistics
-#define ORDINARY_BULLET_DAMAGE 50
-#define FREEZING_BULLET_DAMAGE 25
-#define FREEZING_BULLET_DEGREE 2
-#define BURNING_BULLET_DAMAGE 25
-#define BURNING_BULLET_DEGREE 2
-#define DEFENDING_BULLET_DEGREE 2
-#define WEAKENING_BULLET_DEGREE 2
-#define TESLA_TOWER_DAMAGE 50
-#define TESLA_TOWER_RANGE 9
-#define TESLA_TOWER_SELF_DAMAGE 20
 #define DEFEND_SHIELD_HALF_LENGTH 4
 #define DEFEND_SHIELD_HALF_HEIGHT 4
 
@@ -27,12 +16,16 @@
 #define SKILL_PLACE_TESLA 1
 #define SKILL_PLACE_LAVA_TOWER 2
 #define SKILL_PLAYER_SHOOT_3 3
-#define SKILL_PLAYER_SHOOT_FREEZE 4
-#define SKILL_PLAYER_SHOOT_BURNING 5
-#define SKILL_PLAYER_SHOOT_WEAKING 6
-#define SKILL_DEFEND_SHEILD 7
+#define SKILL_DEFEND_SHEILD 4
+#define SKILL_PLACE_ICE_TOWER 5
+#define SKILL_PLACE_CANNON_TOWER 6
+#define SKILL_PLACE_LASER_TANK 7
+#define SKILL_PLACE_BOOMER_TANK 8
+#define SKILL_PLACE_CHRONO_INFANTRY 9
+#define SKILL_PLACE_NORMAL_INFANTRY 10
+#define SKILL_PLACE_LASER_INFANTRY 11
 
-#define CURRENT_SKILL_NUM 3
+#define CURRENT_SKILL_NUM 12
 
 // unit type id
 // #define UNIT_TYPE_PLAYER_OBJECT 100   Defined in processor.h
@@ -96,7 +89,13 @@ Object* create_weaking_bullet_object(int side);
 Object* create_player_object(int side);
 Object* create_tesla_tower_object(int side);
 Object* create_lava_tower_object(int side);
-Object* create_freeze_tower_object(int side);
+Object* create_cannon_tower_object(int side);
+Object* create_ice_tower_object(int side);
+Object* create_boomer_tank_object(int side);
+Object* create_laser_tank_object(int side);
+Object* create_normal_infantry_object(int side);
+Object* create_laser_infantry_object(int side);
+Object* create_chrono_infantry_object(int side);
 
 // skills
 void get_skill_map(SkillFunc* skill_map, int* skill_num);
@@ -109,6 +108,13 @@ void player_shoot_freeze(Object* self, void* param);
 void player_shoot_burning(Object* self, void* param);
 void player_shoot_weaking(Object* self, void* param);
 void defend_sheild(Object* self, void* param);
+void place_ice_tower(Object* self, void* param);
+void place_cannon_tower(Object* self, void* param);
+void place_laser_tank(Object* self, void* param);
+void place_boomer_tank(Object* self, void* param);
+void place_chrono_infantry(Object* self, void* param);
+void place_normal_infantry(Object* self, void* param);
+void place_laser_infantry(Object* self, void* param);
 
 // utils
 void place_skill_box(Processor* pro, int x, int y);

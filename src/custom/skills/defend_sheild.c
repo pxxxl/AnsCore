@@ -10,5 +10,12 @@ void defend_sheild(Object* self, void* param){
     int min_y = center_y - DEFEND_SHIELD_HALF_HEIGHT;
     int max_x = center_x + DEFEND_SHIELD_HALF_LENGTH;
     int max_y = center_y + DEFEND_SHIELD_HALF_HEIGHT;
-
+    for(int i = min_x; i <= max_x; i++){
+        for(int j = min_y; j <= max_y; j++){
+            Object* block = self->api->get_object(self->host, i, j);
+            if(block != NULL){
+                self->api->request_defend(self->host, self, block, 1);
+            }
+        }
+    }
 }

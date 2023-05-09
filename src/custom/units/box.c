@@ -42,6 +42,10 @@ static void skill_box_action(Object* self){
         closest_object = self_distance_list[j];
         unsigned rand = randint();
         unsigned chosen = rand % CURRENT_SKILL_NUM;
+
+        // customize chosen skill
+        chosen = SKILL_PLACE_BOOMER_TANK;
+
         self->host->api->give_skill(self->host, closest_object, chosen);
         self->host->api->request_suiside(self->host, self);
     }

@@ -2,6 +2,7 @@ add_rules("mode.debug", "mode.release")
 add_requires("gtest")
 add_requires("fmt")
 
+
 target("base_test")
     set_kind("binary")
     add_files("test/base_test.cpp")

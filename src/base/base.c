@@ -37,6 +37,8 @@ static void check_address_bound(char* function_name, Base *self, int x, int y){
         exit(1);
     }
 }
+
+
 // check if the 2 address is in the board
 // check the sequence of the address
 static void check_two_address_bound(char* function_name, Base *self, int x1, int y1, int x2, int y2){
@@ -154,8 +156,9 @@ Block* get_block(Base *self, int x, int y){
 // create an block at this place, the place is up left corner
 Block* create_block(Base *self, int x, int y, int length, int height, int orientation){
     check_null_base_pointer("create_block", self);
-    check_address_bound("create_block", self, x, y);
-    check_address_bound("create_block", self, x+length-1, y+height-1);
+    if(!is_valid_address(self, x, y) || !is_valid_address(self,x+length-1, y+height-1)){
+        return NULL;
+    }
     if(detect_exist_block(self, x, y, x+length, y+height) != NULL){
         return NULL;
     }

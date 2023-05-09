@@ -111,7 +111,7 @@ int main(int argc, char* argv[])
             box_cnt++;
             box_cnt_2++;
 
-            if(box_cnt == 500){
+            if(box_cnt == 100){
                 box_cnt = 0;
             }
             if(box_cnt_2 == 200){

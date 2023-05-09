@@ -12,12 +12,6 @@
 
 #define LOOKUP_MAX_RADIUS 200
 
-
-
-
-
-
-
 #define BASE_MAX_X 40                       // x range [0, BASE_MAX_X)
 #define BASE_MAX_Y 22                       // y range [0, BASE_MAX_Y)
 #define BASE_SIZE 880                       // BASE_MAX_X * BASE_MAX_Y
@@ -38,5 +32,6 @@
 #define BLOCK_PIXEL_Y 16
 
 #define ABS(x) ((x) > 0 ? (x) : -(x))
+#define CENTER(x, length) ((x) + (length) / 2)
 
 

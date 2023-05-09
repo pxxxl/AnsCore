@@ -92,7 +92,7 @@ char read_char_from_terminal(){
     }
     return inp;
 }
-
+/*
 void uart_interrupt(){
     scancode[write_index] = (u8)read_char_from_terminal();
     write_index++;
@@ -100,6 +100,8 @@ void uart_interrupt(){
         write_index = 0;
     }
 }
+*/
+
 
 char read_char(int read_index, char* release){
     char cha = read_char_from_terminal();

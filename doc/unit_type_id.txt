@@ -14,3 +14,12 @@
 112 freeze bullet
 113 fire bullet
 114 weak bullet
+115 cannon
+116 ice tower
+117 chrono infantry
+118 normal infantry
+119 terrorist
+120 boomer car
+121 iceWizard
+122 lazer infantry
+123 lazer tank

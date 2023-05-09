@@ -17,3 +17,4 @@ void player_shoot(Object* self, void* param){
     bullet = create_ordinary_bullet_object(side);
     self->api->request_place(self->host, self, bullet, actual_x, actual_y, ori);
 }
+

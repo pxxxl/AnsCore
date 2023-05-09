@@ -1,0 +1,81 @@
+Date : 2023-05-08 20:56:45
+Directory : d:\Programming\CPrograms\AnsCore
+Total : 41 files,  4187 codes, 371 comments, 636 blanks, all 5194 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| C        |         21 |      2,559 |        169 |        303 |      3,031 |
+| C++      |         16 |      1,496 |        202 |        251 |      1,949 |
+| Markdown |          3 |         94 |          0 |         73 |        167 |
+| XMake    |          1 |         38 |          0 |          9 |         47 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++-----------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                  | files      | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                     |         41 |      4,187 |        371 |        636 |      5,194 |
+| . (Files)                                                             |          2 |         40 |          0 |         11 |         51 |
+| doc                                                                   |          2 |         92 |          0 |         71 |        163 |
+| src                                                                   |         33 |      3,595 |        256 |        509 |      4,360 |
+| src (Files)                                                           |          2 |         27 |          1 |         11 |         39 |
+| src\IO                                                                |          6 |        652 |         14 |         79 |        745 |
+| src\base                                                              |          2 |        624 |         77 |         53 |        754 |
+| src\custom                                                            |         19 |      1,357 |         21 |        160 |      1,538 |
+| src\custom (Files)                                                    |          1 |         99 |          8 |         18 |        125 |
+| src\custom\skills                                                     |          8 |        172 |          0 |         14 |        186 |
+| src\custom\units                                                      |         10 |      1,086 |         13 |        128 |      1,227 |
+| src\object                                                            |          2 |        154 |         24 |         50 |        228 |
+| src\processor                                                         |          2 |        781 |        119 |        156 |      1,056 |
+| test                                                                  |          4 |        460 |        115 |         45 |        620 |
++-----------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-----------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                              | language | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| d:\Programming\CPrograms\AnsCore\README.md                            | Markdown |          2 |          0 |          2 |          4 |
+| d:\Programming\CPrograms\AnsCore\doc\BasicDesign.md                   | Markdown |         48 |          0 |         37 |         85 |
+| d:\Programming\CPrograms\AnsCore\doc\ProcessorBehavior.md             | Markdown |         44 |          0 |         34 |         78 |
+| d:\Programming\CPrograms\AnsCore\src\IO\draw.h                        | C++      |         32 |          2 |         11 |         45 |
+| d:\Programming\CPrograms\AnsCore\src\IO\qt_draw.cpp                   | C++      |        173 |          1 |         30 |        204 |
+| d:\Programming\CPrograms\AnsCore\src\IO\qt_draw.h                     | C++      |        163 |          1 |         16 |        180 |
+| d:\Programming\CPrograms\AnsCore\src\IO\random.cpp                    | C++      |          8 |          0 |          3 |         11 |
+| d:\Programming\CPrograms\AnsCore\src\IO\xil_keydrive.h                | C++      |        152 |          9 |         11 |        172 |
+| d:\Programming\CPrograms\AnsCore\src\IO\xil_keydrive_legacy.h         | C++      |        124 |          1 |          8 |        133 |
+| d:\Programming\CPrograms\AnsCore\src\base\base.c                      | C        |        585 |         47 |         29 |        661 |
+| d:\Programming\CPrograms\AnsCore\src\base\base.h                      | C++      |         39 |         30 |         24 |         93 |
+| d:\Programming\CPrograms\AnsCore\src\custom\custom.h                  | C++      |         99 |          8 |         18 |        125 |
+| d:\Programming\CPrograms\AnsCore\src\custom\skills\defend_sheild.c    | C        |         12 |          0 |          2 |         14 |
+| d:\Programming\CPrograms\AnsCore\src\custom\skills\get_skill_map.c    | C        |          7 |          0 |          1 |          8 |
+| d:\Programming\CPrograms\AnsCore\src\custom\skills\place_lava_tower.c | C        |         17 |          0 |          1 |         18 |
+| d:\Programming\CPrograms\AnsCore\src\custom\skills\place_pack.c       | C        |          7 |          0 |          2 |          9 |
+| d:\Programming\CPrograms\AnsCore\src\custom\skills\place_tesla.c      | C        |         17 |          0 |          1 |         18 |
+| d:\Programming\CPrograms\AnsCore\src\custom\skills\shoot.c            | C        |         18 |          0 |          3 |         21 |
+| d:\Programming\CPrograms\AnsCore\src\custom\skills\shoot_3.c          | C        |         42 |          0 |          1 |         43 |
+| d:\Programming\CPrograms\AnsCore\src\custom\skills\shoot_special.c    | C        |         52 |          0 |          3 |         55 |
+| d:\Programming\CPrograms\AnsCore\src\custom\units\boomer.c            | C        |         74 |          0 |          9 |         83 |
+| d:\Programming\CPrograms\AnsCore\src\custom\units\box.c               | C        |        106 |          1 |          8 |        115 |
+| d:\Programming\CPrograms\AnsCore\src\custom\units\bullets.c           | C        |        100 |          7 |         23 |        130 |
+| d:\Programming\CPrograms\AnsCore\src\custom\units\cannon.c            | C        |         36 |          0 |          4 |         40 |
+| d:\Programming\CPrograms\AnsCore\src\custom\units\ini.c               | C        |        367 |          0 |         46 |        413 |
+| d:\Programming\CPrograms\AnsCore\src\custom\units\laser.c             | C        |        114 |          0 |         10 |        124 |
+| d:\Programming\CPrograms\AnsCore\src\custom\units\normal_infantry.c   | C        |          1 |          0 |          0 |          1 |
+| d:\Programming\CPrograms\AnsCore\src\custom\units\obstacles.c         | C        |         24 |          1 |          2 |         27 |
+| d:\Programming\CPrograms\AnsCore\src\custom\units\player_object.c     | C        |         84 |          4 |         13 |        101 |
+| d:\Programming\CPrograms\AnsCore\src\custom\units\tower.c             | C        |        180 |          0 |         13 |        193 |
+| d:\Programming\CPrograms\AnsCore\src\macros.h                         | C++      |         26 |          1 |         11 |         38 |
+| d:\Programming\CPrograms\AnsCore\src\object\object.c                  | C        |         70 |          7 |         15 |         92 |
+| d:\Programming\CPrograms\AnsCore\src\object\object.h                  | C++      |         84 |         17 |         35 |        136 |
+| d:\Programming\CPrograms\AnsCore\src\processor\processor.c            | C        |        646 |        102 |        117 |        865 |
+| d:\Programming\CPrograms\AnsCore\src\processor\processor.h            | C++      |        135 |         17 |         39 |        191 |
+| d:\Programming\CPrograms\AnsCore\src\random.h                         | C++      |          1 |          0 |          0 |          1 |
+| d:\Programming\CPrograms\AnsCore\test\base_test.cpp                   | C++      |        263 |         56 |         10 |        329 |
+| d:\Programming\CPrograms\AnsCore\test\processor_API_test.cpp          | C++      |         80 |         13 |         11 |        104 |
+| d:\Programming\CPrograms\AnsCore\test\qt_graphic_test.cpp             | C++      |         34 |         13 |          8 |         55 |
+| d:\Programming\CPrograms\AnsCore\test\qt_player_object_test.cpp       | C++      |         83 |         33 |         16 |        132 |
+| d:\Programming\CPrograms\AnsCore\xmake.lua                            | XMake    |         38 |          0 |          9 |         47 |
+| Total                                                                 |          |      4,187 |        371 |        636 |      5,194 |
++-----------------------------------------------------------------------+----------+------------+------------+------------+------------+

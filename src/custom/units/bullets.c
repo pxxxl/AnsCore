@@ -1,6 +1,14 @@
 #include "../custom.h"
 #include <stdlib.h>
 
+#define ORDINARY_BULLET_DAMAGE 50
+#define FREEZING_BULLET_DAMAGE 25
+#define FREEZING_BULLET_DEGREE 2
+#define BURNING_BULLET_DAMAGE 25
+#define BURNING_BULLET_DEGREE 2
+#define DEFENDING_BULLET_DEGREE 2
+#define WEAKENING_BULLET_DEGREE 2
+
 extern ini BulletOrdinaryIni;
 extern ini BulletFreezeIni;
 extern ini BulletBurningIni;
