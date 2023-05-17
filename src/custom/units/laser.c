@@ -21,44 +21,48 @@ void laser_shoot(Object* self, void* param){
                 Object* target = self->api->get_object(self->host, begin_x, i);
                 if(target != NULL){
                     if(target->config.side != self->config.side){
-                        self->api->request_hurt(self->host, self, target, 10);
+                        self->api->request_hurt(self->host, self, target, LASER_DAMAGE);
                     }
                 }
                 self->api->request_load_static_effect(self->host, begin_x, i, 410, 0);
             }
+            break;
         case DOWN: 
             begin_y += 1 + half_y;
             for(int i = begin_y; i < self->host->base->height; i++){
                 Object* target = self->api->get_object(self->host, begin_x, i);
                 if(target != NULL){
                     if(target->config.side != self->config.side){
-                        self->api->request_hurt(self->host, self, target, 10);
+                        self->api->request_hurt(self->host, self, target, LASER_DAMAGE);
                     }
                 }
                 self->api->request_load_static_effect(self->host, begin_x, i, 410, 0);
             }
+            break;
         case LEFT:
             begin_x -= 1 + half_x;
-            for(int i = begin_x; i >= 0; i--){
+            for(int i = 0; i < begin_x; i++){
                 Object* target = self->api->get_object(self->host, i, begin_y);
                 if(target != NULL){
                     if(target->config.side != self->config.side){
-                        self->api->request_hurt(self->host, self, target, 10);
+                        self->api->request_hurt(self->host, self, target, LASER_DAMAGE);
                     }
                 }
                 self->api->request_load_static_effect(self->host, i, begin_y, 411, 0);
             }
+            break;
         case RIGHT:
             begin_x += 1 + half_x;
             for(int i = begin_x; i < self->host->base->length; i++){
                 Object* target = self->api->get_object(self->host, i, begin_y);
                 if(target != NULL){
                     if(target->config.side != self->config.side){
-                        self->api->request_hurt(self->host, self, target, 10);
+                        self->api->request_hurt(self->host, self, target, LASER_DAMAGE);
                     }
                 }
                 self->api->request_load_static_effect(self->host, i, begin_y, 411, 0);
             }
+            break;
     }
 }
 
@@ -83,7 +87,7 @@ void laser_action(Object* self){
     for(j = 1; j < length; j++){
         int other_side = self_distance_list[j]->config.side;
         int other_family = self_distance_list[j]->config.family;
-        if(other_side != self_side && other_family != BULLET){
+        if(other_side != self_side && other_family != BULLET && other_family != PACK){
             break;
         }
     }

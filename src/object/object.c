@@ -14,7 +14,11 @@ void default_object_death(Object *self){
 
 void default_object_hurt(Object *self, int damage){
     Object* object = (Object*)self;
-    object->status.hp -= damage;
+    if(object->status.hp <= damage){
+        object->status.hp = 0;
+    }else{
+        object->status.hp -= damage;
+    }   
 }
 
 void default_object_heal(Object *self, int heal){

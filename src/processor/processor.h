@@ -176,6 +176,8 @@ struct Processor{
 
     void (*step)(Processor *self);
     ProcessorAnimeData (*export_anime_data)(Processor *self);
+    ProcessorAnimeData (*export_anime_data_x_vertical)(Processor *self);
+    ProcessorAnimeData (*export_anime_data_y_plus_120)(Processor *self);
     void (*fillin_skill_map)(Processor *self, SkillFunc* skill_map, int length);
 };
 

@@ -109,7 +109,7 @@ ini TeslaTowerIni = {
     .max_hp = 300,
     .length = 3,
     .height = 3,
-    .interval = 10,
+    .interval = 20,
     .image_none_ori_id = 106,
 };
 
@@ -195,7 +195,7 @@ ini BulletPackIni = {
     .persist_object = FALSE,
 
     .type_id = 114,
-    .type = BULLET,
+    .type = PACK,
     .max_hp = 1,
     .length = 1,
     .height = 1,
@@ -210,7 +210,7 @@ ini SkillPackIni = {
     .persist_object = FALSE,
 
     .type_id = 114,
-    .type = BULLET,
+    .type = PACK,
     .max_hp = 1,
     .length = 1,
     .height = 1,
@@ -286,7 +286,7 @@ ini IceTowerIni = {
     .max_hp = 300,
     .length = 3,
     .height = 3,
-    .interval = 20,
+    .interval = 10,
     .image_none_ori_id = 129
 };
 
@@ -298,14 +298,14 @@ ini ChronoInfantryIni = {
 
     .type_id = 117,
     .type = INFANTRY,
-    .max_hp = 200,
+    .max_hp = 100,
     .length = 1,
     .height = 1,
     .interval = 2,
     .image_none_ori_id = 128,
     .image_up_id = 128,
     .image_down_id = 128,
-    .image_left_id = 114,
+    .image_left_id = 128,
     .image_right_id = 128
 };
 
@@ -317,7 +317,7 @@ ini NormalInfantryIni = {
 
     .type_id = 118,
     .type = INFANTRY,
-    .max_hp = 200,
+    .max_hp = 100,
     .length = 1,
     .height = 1,
     .interval = 2,
@@ -355,7 +355,7 @@ ini LaserInfantryIni = {
 
     .type_id = 122,
     .type = INFANTRY,
-    .max_hp = 200,
+    .max_hp = 50,
     .length = 1,
     .height = 1,
     .interval = 4,

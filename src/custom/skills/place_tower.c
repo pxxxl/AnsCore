@@ -65,5 +65,6 @@ void place_cannon_tower(Object* self, void* param){
     }
     int side = self->config.side == RED ? RED : BLUE;
     Object* lava = create_cannon_tower_object(side);
+    int direction = (self->block->orientation == LEFT || self->block->orientation == UP) ? LEFT : RIGHT;
     self->api->request_place(self->host, self, lava, actual_x, actual_y, LEFT);
 }

@@ -8,7 +8,8 @@
 #define CANNON_TOWER_SELF_DAMAGE 20
 #define TESLA_TOWER_DAMAGE 50
 #define TESLA_TOWER_RANGE 9
-#define TESLA_TOWER_SELF_DAMAGE 20
+#define TESLA_TOWER_SELF_DAMAGE 5
+#define BIRTH_SILENCE 3
 
 extern ini TeslaTowerIni;
 extern ini LavaTowerIni;
@@ -50,6 +51,8 @@ void tesla_tower_action(Object* self){
         closest_object = self_distance_list[j];
         int cx = closest_object->block->x;
         int cy = closest_object->block->y;
+        int target_x = CENTER(closest_object->block->x, closest_object->block->length);
+        int target_y = CENTER(closest_object->block->y, closest_object->block->height);
         int ix = self->block->x;
         int iy = self->block->y;
         int distance_square = (cx - ix) * (cx - ix) + (cy - iy) * (cy - iy);
@@ -59,8 +62,8 @@ void tesla_tower_action(Object* self){
                 self->host,
                 ix + 1,
                 iy + 1,
-                cx + 1,
-                cy + 1,
+                target_x,
+                target_y,
                 402,
                 0
             );
@@ -73,7 +76,7 @@ Object* create_tesla_tower_object(int side){
     Object* obs = init_object(TeslaTowerIni, side);
     TeslaStorage* storage = (TeslaStorage*)malloc(sizeof(TeslaStorage));
     obs->storage = storage;
-    storage->birth_silent = 10;
+    storage->birth_silent = BIRTH_SILENCE;
     obs->action = tesla_tower_action;
     return obs;
 }
@@ -105,6 +108,8 @@ void lava_tower_action(Object* self){
         closest_object = self_distance_list[j];
         int cx = closest_object->block->x;
         int cy = closest_object->block->y;
+        int target_x = CENTER(closest_object->block->x, closest_object->block->length);
+        int target_y = CENTER(closest_object->block->y, closest_object->block->height);
         int ix = self->block->x;
         int iy = self->block->y;
         int distance_square = (cx - ix) * (cx - ix) + (cy - iy) * (cy - iy);
@@ -114,8 +119,8 @@ void lava_tower_action(Object* self){
                 self->host,
                 ix + 1,
                 iy + 1,
-                cx + 1,
-                cy + 1,
+                target_x,
+                target_y,
                 403,
                 0
             );
@@ -125,7 +130,7 @@ void lava_tower_action(Object* self){
 }
 
 Object* create_lava_tower_object(int side){
-    Object* obs = init_object(TeslaTowerIni, side);
+    Object* obs = init_object(LavaTowerIni, side);
     obs->action = lava_tower_action;
     return obs;
 }
@@ -161,6 +166,8 @@ void ice_tower_action(Object* self){
         closest_object = self_distance_list[j];
         int cx = closest_object->block->x;
         int cy = closest_object->block->y;
+        int target_x = CENTER(closest_object->block->x, closest_object->block->length);
+        int target_y = CENTER(closest_object->block->y, closest_object->block->height);
         int ix = self->block->x;
         int iy = self->block->y;
         int distance_square = (cx - ix) * (cx - ix) + (cy - iy) * (cy - iy);
@@ -170,8 +177,8 @@ void ice_tower_action(Object* self){
                 self->host,
                 ix + 1,
                 iy + 1,
-                cx + 1,
-                cy + 1,
+                target_x,
+                target_y,
                 404,
                 0
             );
@@ -184,7 +191,7 @@ Object* create_ice_tower_object(int side){
     Object* obs = init_object(IceTowerIni, side);
     TeslaStorage* storage = (TeslaStorage*)malloc(sizeof(TeslaStorage));
     obs->storage = storage;
-    storage->birth_silent = 10;
+    storage->birth_silent = BIRTH_SILENCE;
     obs->action = ice_tower_action;
     return obs;
 }

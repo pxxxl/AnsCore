@@ -43,6 +43,8 @@ void step(Processor *self);
 void fillin_skill_map(Processor *self, SkillFunc* skill_map, int length);
 PlayerDisplayPack processor_player_data_to_anime_player_data(PlayerObject* player);
 ProcessorAnimeData export_anime_data(Processor *self);
+ProcessorAnimeData export_anime_data_x_vertical(Processor *self);
+ProcessorAnimeData export_anime_data_y_plus_120(Processor *self);
 void processAPIRequest(Processor *self, ProcessorAPIRequest *request);
 
 
@@ -112,6 +114,8 @@ Processor* init_processor(int length, int height){
     // create the processor's method
     self->step = step;
     self->export_anime_data = export_anime_data;
+    self->export_anime_data_x_vertical = export_anime_data_x_vertical;
+    self->export_anime_data_y_plus_120 = export_anime_data_y_plus_120;
     self->fillin_skill_map = fillin_skill_map;
 
     return self;
@@ -277,6 +281,7 @@ void step(Processor *self){
 PlayerDisplayPack processor_player_data_to_anime_player_data(PlayerObject* player){
     PlayerDisplayPack pack;
     pack.hp = player->object->status.hp;
+    if(pack.hp < 0) pack.hp = 0;
     pack.side = player->object->config.side;
     pack.skill_num = player->skill_num;
     pack.skill_choice = player->skill_choice;
@@ -316,6 +321,40 @@ ProcessorAnimeData export_anime_data(Processor *self){
     self->anime_cache_size = i;
     data.player_display_pack[0] = processor_player_data_to_anime_player_data(&self->player[0]);
     data.player_display_pack[1] = processor_player_data_to_anime_player_data(&self->player[1]);
+    return data;
+}
+
+// export the anime data
+// x-axis vertical
+ProcessorAnimeData export_anime_data_x_vertical(Processor *self){
+    ProcessorAnimeData data = export_anime_data(self);
+    for(int i = 0; i < data.anime_pack_size; i++){
+        AnimePack* pack = &data.anime_pack[i];
+        int x = pack->x;
+        int y = pack->y;
+        int des_x = pack->des_x;
+        int des_y = pack->des_y;
+        pack->x = y;
+        pack->y = x;
+        pack->des_x = des_y;
+        pack->des_y = des_x;
+    }
+    return data;
+}
+
+ProcessorAnimeData export_anime_data_y_plus_120(Processor *self){
+    ProcessorAnimeData data = export_anime_data(self);
+    for(int i = 0; i < data.anime_pack_size; i++){
+        AnimePack* pack = &data.anime_pack[i];
+        int x = pack->x;
+        int y = pack->y + 120;
+        int des_x = pack->des_x;
+        int des_y = pack->des_y + 120;
+        pack->x = y;
+        pack->y = x;
+        pack->des_x = des_y;
+        pack->des_y = des_x;
+    }
     return data;
 }
 

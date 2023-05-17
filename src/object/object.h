@@ -13,10 +13,10 @@ typedef struct Object Object;
 #define TANK 4
 #define MAGIC 5
 #define OBSTACLE 6
+#define PACK 7
 
 #include "../processor/processor.h"
 #include "../macros.h"
-#include "../base/base.h"
 #include <malloc.h>
 
 struct Status;

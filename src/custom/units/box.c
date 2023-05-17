@@ -44,7 +44,7 @@ static void skill_box_action(Object* self){
         unsigned chosen = rand % CURRENT_SKILL_NUM;
 
         // customize chosen skill
-        chosen = SKILL_PLACE_BOOMER_TANK;
+        //chosen = SKILL_PLACE_BOOMER_TANK;
 
         self->host->api->give_skill(self->host, closest_object, chosen);
         self->host->api->request_suiside(self->host, self);
@@ -103,7 +103,7 @@ static void bullet_box_action(Object* self){
             case 2: special_bullet_type = UNIT_TYPE_WEAKENING_BULLET; break;
         }
         PlayerObjectStorage* storage = closest_object->storage;
-        storage->spetial_bullet_remain = 10;
+        storage->spetial_bullet_remain = 5;
         storage->spetial_bullet_type = special_bullet_type;
         self->host->api->request_suiside(self->host, self);
     }

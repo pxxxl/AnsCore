@@ -31,44 +31,50 @@ BOOL is_valid_address(Base *self, int x, int y){
     return TRUE;
 }
 // check if the address is in the board
-static void check_address_bound(char* function_name, Base *self, int x, int y){
+static BOOL check_address_bound(char* function_name, Base *self, int x, int y){
     if(!is_valid_address(self, x, y)){
-        printf("ERROR: invalid address in %s, x = %d, y = %d", function_name, x, y);
-        exit(1);
+        //printf("ERROR: invalid address in %s, x = %d, y = %d", function_name, x, y);
+        return FALSE;
     }
+    return TRUE;
 }
 
 
 // check if the 2 address is in the board
 // check the sequence of the address
-static void check_two_address_bound(char* function_name, Base *self, int x1, int y1, int x2, int y2){
+static BOOL check_two_address_bound(char* function_name, Base *self, int x1, int y1, int x2, int y2){
+    int is_valid = 1;
     if(!is_valid_address(self, x1, y1)){
-        printf("ERROR: invalid address in %s, x1 = %d, y1 = %d", function_name, x1, y1);
-        exit(1);
+        //printf("ERROR: invalid address in %s, x1 = %d, y1 = %d", function_name, x1, y1);
+        is_valid = 2;
     }
     if(!is_valid_address(self, x2, y2)){
-        printf("ERROR: invalid address in %s, x2 = %d, y2 = %d", function_name, x2, y2);
-        exit(1);
+        //printf("ERROR: invalid address in %s, x2 = %d, y2 = %d", function_name, x2, y2);
+        is_valid = 3;
     }
     if(x1 > x2){
-        printf("ERROR: non logical address in %s, x1 = %d, x2 = %d", function_name, x1, x2);
-        exit(1);
+        //printf("ERROR: non logical address in %s, x1 = %d, x2 = %d", function_name, x1, x2);
+        is_valid = 4;
     }
     if(y1 > y2){
-        printf("ERROR: non logical address in %s, y1 = %d, y2 = %d", function_name, y1, y2);
-        exit(1);
+        //printf("ERROR: non logical address in %s, y1 = %d, y2 = %d", function_name, y1, y2);
+        is_valid = 5;
     }
+    if(is_valid != 1){
+        return FALSE;
+    }
+    return TRUE;
 }
 static void check_null_base_pointer(char* function_name, Base *pointer){
     if(pointer == NULL){
-        printf("ERROR: NULL base pointer in %s", function_name);
-        exit(1);
+        //printf("ERROR: NULL base pointer in %s", function_name);
+        exit(2);
     }
 }
 static void check_null_block_pointer(char* function_name, Block *pointer){
     if(pointer == NULL){
-        printf("ERROR: NULL block pointer in %s", function_name);
-        exit(1);
+        //printf("ERROR: NULL block pointer in %s", function_name);
+        exit(3);
     }
 }
 
@@ -149,7 +155,9 @@ Block* detect_exist_block(Base *self, int x1, int y1, int x2, int y2){
 // return NULL if there is no block
 Block* get_block(Base *self, int x, int y){
     check_null_base_pointer("get_block", self);
-    check_address_bound("get_block", self, x, y);
+    if(!check_address_bound("get_block", self, x, y)){
+        return NULL;
+    }
     return self->base[y][x];
 }
 
@@ -184,14 +192,17 @@ Block* create_block(Base *self, int x, int y, int length, int height, int orient
 BOOL teleport_block(Base *self, int des_x, int des_y, Block *block){
     check_null_base_pointer("teleport_block", self);
     check_null_block_pointer("teleport_block", block);
-    check_address_bound("teleport_block", self, des_x, des_y);
-    check_address_bound("teleport_block", self, des_x+block->length-1, des_y+block->height-1);
+    BOOL res1 = check_address_bound("teleport_block", self, des_x, des_y);
+    BOOL res2 = check_address_bound("teleport_block", self, des_x+block->length-1, des_y+block->height-1);
+    if(!res1 || !res2){
+        return FALSE;
+    }
     if(detect_exist_block(self, des_x, des_y, des_x+block->length, des_y+block->height) != NULL){
         return FALSE;
     }
     if(block == NULL){
-        printf("ERROR: NULL block in teleport_block");
-        exit(1);
+        //printf("ERROR: NULL block in teleport_block");
+        return FALSE;
     }
     int i, j;
     for(i = block->y; i < block->y+block->height; i++){
@@ -251,8 +262,8 @@ BOOL move_block(Base *self, Block *block, int direction, int step){
             empty_zone_y2 = block->y + block->height;
             break;
         default:
-            printf("ERROR: invalid direction in move_block");
-            exit(1);
+            //printf("ERROR: invalid direction in move_block");
+            return FALSE;
     }
     if(detect_exist_block(self, empty_zone_x1, empty_zone_y1, empty_zone_x2, empty_zone_y2) != NULL){
         return FALSE;
@@ -279,7 +290,7 @@ BOOL move_block(Base *self, Block *block, int direction, int step){
         case DOWN:block->orientation = DOWN;break;
         case LEFT:block->orientation = LEFT;break;
         case RIGHT:block->orientation = RIGHT;break;
-        default:printf("ERROR: invalid direction in move_block");exit(1);}
+        }
     return TRUE;
 }
 
@@ -369,8 +380,7 @@ static int path_detect(Base* self, int x1, int y1, int x2, int y2){
         }
         return -1;
     }
-    printf("ERROR: invalid address in (inline) path_detect");
-    exit(1);
+    return -1;
 }
 
 // find the closest block in the direction
@@ -379,8 +389,7 @@ Block* find_closest_block_in_direction(Base *self, Block *block, int direction){
     check_null_base_pointer("find_closest_block_in_direction", self);
     check_null_block_pointer("find_closest_block_in_direction", block);
     if(direction != UP && direction != DOWN && direction != LEFT && direction != RIGHT){
-        printf("ERROR: invalid direction in find_closest_block_in_direction");
-        exit(1);
+        return NULL;
     }
     int i, j;
     int* touch_position;
@@ -539,7 +548,10 @@ Block* find_closest_block(Base *self, Block *block){
 //find blocks in [x1, x2), [y1, y2) 
 BOOL find_all_blocks(Base *self, int x1, int y1, int x2, int y2, Block **blocks, int *length){
     check_null_base_pointer("find_all_blocks", self);
-    check_two_address_bound("find_all_block", self, x1, y1, x2-1, y2-1);
+    BOOL res = check_two_address_bound("find_all_block", self, x1, y1, x2-1, y2-1);
+    if(res == FALSE){
+        return FALSE;
+    }
     int i, j, k, valid;
     int count = 0;
     for(i = y1; i < y2; i++){

@@ -4,10 +4,11 @@
 #define ORDINARY_BULLET_DAMAGE 50
 #define FREEZING_BULLET_DAMAGE 25
 #define FREEZING_BULLET_DEGREE 2
-#define BURNING_BULLET_DAMAGE 25
+#define BURNING_BULLET_DAMAGE 100
 #define BURNING_BULLET_DEGREE 2
 #define DEFENDING_BULLET_DEGREE 2
 #define WEAKENING_BULLET_DEGREE 2
+#define WEAKENING_BULLET_DAMAGE 75
 
 extern ini BulletOrdinaryIni;
 extern ini BulletFreezeIni;
@@ -26,16 +27,17 @@ static void ordinary_bullet_hit(Object* self, Object* target, int damage){
 
 static void freeze_bullet_hit(Object* self, Object* target, int degree){
     self->api->request_freeze(self->host, self, target, degree);
+    self->api->request_hurt(self->host, self, target, FREEZING_BULLET_DAMAGE);
 }
 
 static void burning_bullet_hit(Object* self, Object* target, int degree){
     //self->api->request_burn(self->host, self, target, degree);
-    self->api->request_hurt(self->host, self, target, 100);
+    self->api->request_hurt(self->host, self, target, BURNING_BULLET_DAMAGE);
 }
 
 static void weaking_bullet_hit(Object* self, Object* target, int degree){
     //self->api->request_weak(self->host, self, target, degree);
-    self->api->request_hurt(self->host, self, target, 100);
+    self->api->request_hurt(self->host, self, target, WEAKENING_BULLET_DAMAGE);
 }
 
 // state: move or hit or edge suiside

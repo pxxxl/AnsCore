@@ -1,8 +1,8 @@
 #include "../custom.h"
 #include "../../random.h"
 
-#define ATTACK_RANGE 7
-#define ATTACK_DAMAGE 5
+#define ATTACK_RANGE 6
+#define ATTACK_DAMAGE 3
 
 extern ini NormalInfantryIni;
 extern ini ChronoInfantryIni;
